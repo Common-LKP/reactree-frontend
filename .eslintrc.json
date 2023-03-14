@@ -1,12 +1,12 @@
 {
-  "root": true,
-  "env": {
-    "es2021": true,
-    "node": true,
-    "browser": true
-  },
-  "extends": ["airbnb", "airbnb/hooks", "plugin:prettier/recommended"],
-  "rules": {
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }]
-  }
+//   "root": true,
+//   "env": {
+//     "es2021": true,
+//     "node": true,
+//     "browser": true
+//   },
+//   "extends": ["airbnb", "airbnb/hooks", "plugin:prettier/recommended"],
+//   "rules": {
+//     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }]
+//   }
 }
