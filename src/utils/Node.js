@@ -30,9 +30,7 @@ Node.prototype.addProps = function (node) {
   if (!node.memoizedProps) return;
 
   if (node.tag === 0 || node.tag === 1) {
-    if (Object.values(node.memoizedProps).length) {
-      this.props = [...this.props, Object.values(node.memoizedProps)];
-    }
+    this.props = [...Object.values(node.memoizedProps)];
   }
 };
 
