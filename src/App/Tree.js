@@ -1,8 +1,7 @@
-import { select } from "d3";
-import React, { useEffect, useRef } from "react";
+/* eslint-disable no-param-reassign */
 import * as d3 from "d3";
 
-function Tree(
+function getTreeSVG(
   data,
   {
     path,
@@ -56,7 +55,7 @@ function Tree(
     if (d.x < x0) x0 = d.x;
   });
 
-  // if (height === undefined) height = x1 - x0 + dx * 2;
+  if (height === undefined) height = x1 - x0 + dx * 2;
 
   if (typeof curve !== "function") throw new Error(`Unsupported curve`);
 
@@ -118,69 +117,4 @@ function Tree(
   return svg.node();
 }
 
-function D3Tree() {
-  const svgRef = useRef();
-
-  useEffect(() => {
-    const object = {
-      name: "CompFirst",
-      props: [],
-      states: [],
-      children: [
-        {
-          name: "CompSecret",
-          props: [],
-          states: [],
-          children: [],
-        },
-        {
-          name: "CompSecond",
-          props: [],
-          states: [],
-          children: [
-            {
-              name: "CompThird",
-              props: [],
-              states: [],
-              children: [],
-            },
-            {
-              name: "CompThird",
-              props: [],
-              states: [],
-              children: [],
-            },
-            {
-              name: "Add",
-              props: [],
-              states: [],
-              children: [],
-            },
-          ],
-        },
-      ],
-    };
-
-    const treeSvg = Tree(object, {
-      children: d => d.children,
-      title: (d, n) =>
-        `${n
-          .ancestors()
-          .reverse()
-          .map(node => node.data.name)
-          .join(".")}`,
-      label: (d, n) => n.data.name,
-    });
-    select(svgRef.current).append(() => treeSvg);
-
-    const bounds = svgRef.current.getBBox();
-    select(svgRef.current).attr(
-      "viewBox",
-      `${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}`,
-    );
-  }, []);
-
-  return <svg ref={svgRef} width={600} height={600} />;
-}
-
-export default D3Tree;
+export default getTreeSVG;
