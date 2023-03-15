@@ -7,6 +7,7 @@ function createNode(fiberNode, tree, parentTree) {
 
   tree.setName(node);
   tree.addProps(node);
+  tree.addState(node);
 
   if (fiberNode.sibling) {
     parentTree.addChild(new Node());
