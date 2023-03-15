@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "main": "src/Electron/main.js",
-  "homepage": "./",
   "dependencies": {
     "@electron/remote": "^2.0.9",
     "@testing-library/jest-dom": "^5.16.5",
@@ -18,8 +17,7 @@
     "react-scripts": "5.0.1",
     "styled-components": "^5.3.9",
     "styled-reset": "^4.4.5",
-    "wait-on": "^7.0.1",
-    "web-vitals": "^2.1.4"
+    "wait-on": "^7.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
