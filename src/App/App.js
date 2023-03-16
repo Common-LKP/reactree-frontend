@@ -99,7 +99,7 @@ function App() {
           </DriectoryOpenButton>
         </div>
         <div>
-          <p id="p">npm 실행 명령어를 입력해주세요.</p>
+          <p>npm 실행 명령어를 입력해주세요.</p>
           <InputCommand type="text" placeholder="ex) npm run start" />
         </div>
       </Nav>

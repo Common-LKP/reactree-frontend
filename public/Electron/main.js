@@ -21,16 +21,6 @@ const createWindow = () => {
     },
   });
 
-  const view = new BrowserView();
-
-  win.setBrowserView(view);
-  view.setBounds({
-    x: 50,
-    y: 220,
-    width: 700,
-    height: 600,
-  });
-
   win.loadURL("http://localhost:3002");
 };
 
@@ -57,29 +47,38 @@ app.on("window-all-closed", () => {
 });
 
 ipcMain.handle("get-path", async () => {
-  const result = await dialog.showOpenDialog({
-    properties: ["openDirectory"],
-  });
-
-  if (!result.canceled && result.filePaths.length > 0) {
-    const projectPath = result.filePaths[0];
-    exec("BROWSER=none npm run start", {
-      cwd: projectPath,
+  try {
+    const { canceled, filePaths } = await dialog.showOpenDialog({
+      properties: ["openDirectory"],
     });
 
-    await waitOn({ resources: ["http://localhost:3000"] });
+    if (!canceled && filePaths.length > 0) {
+      const projectPath = filePaths[0];
+      exec("BROWSER=none npm run start", {
+        cwd: projectPath,
+      });
 
-    return "http://localhost:3000";
+      await waitOn({ resources: ["http://localhost:3000"] });
+
+      return "http://localhost:3000";
+    }
+    return null;
+  } catch (error) {
+    throw new Error("유효하지않은 url입니다.");
   }
-  return null;
 });
 
 ipcMain.on("load-url", (event, url) => {
   const win = BrowserWindow.getFocusedWindow();
-  if (win) {
-    const view = win.getBrowserView();
-    if (view) {
-      view.webContents.loadURL(url);
-    }
-  }
+  const view = new BrowserView();
+
+  win.setBrowserView(view);
+  view.setBounds({
+    x: 50,
+    y: 220,
+    width: 700,
+    height: 600,
+  });
+
+  view.webContents.loadURL(url);
 });

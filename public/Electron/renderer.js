@@ -15,9 +15,13 @@ const getElementByIdAsync = id =>
 document.addEventListener("DOMContentLoaded", async () => {
   const buttonElement = await getElementByIdAsync("directoryButton");
   buttonElement.addEventListener("click", async () => {
-    const url = await window.electronAPI.openFileDialog();
-    if (url) {
-      window.electronAPI.loadURLInBrowser(url);
+    try {
+      const url = await window.electronAPI.openFileDialog();
+      if (url) {
+        window.electronAPI.loadURLInBrowser(url);
+      }
+    } catch (error) {
+      console.error("Error in loadURLInBrowser");
     }
   });
 });
