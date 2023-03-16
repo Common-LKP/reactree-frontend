@@ -51,10 +51,39 @@ const quitApplication = () => {
   );
 };
 
+const handleErrorMessage = error => {
+  const lines = error.split(os.EOL);
+  let detail;
+
+  if (lines[lines.length - 1] === "") {
+    lines.pop();
+  }
+
+  for (let i = 0; i < lines.length; i += 1) {
+    if (lines[i].includes("no such file")) {
+      detail = "올바르지 않은 폴더 경로입니다.";
+      break;
+    }
+
+    if (lines[i].includes("Cannot find module")) {
+      detail = "모듈정보를 찾을 수 없습니다.";
+      break;
+    }
+  }
+
+  dialog.showMessageBox({
+    buttons: ["확인"],
+    title: "Error!",
+    message: "Error!",
+    detail,
+  });
+};
+
 const createWindow = () => {
   const win = new BrowserWindow({
-    width: 2000,
-    height: 1500,
+    width: 1040,
+    height: 900,
+    resizable: false,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: false,
@@ -90,10 +119,10 @@ ipcMain.handle("get-path", async () => {
 
     BrowserWindow.getFocusedWindow().setBrowserView(view);
     view.setBounds({
-      x: 50,
-      y: 220,
-      width: 700,
-      height: 600,
+      x: 20,
+      y: 184,
+      width: 480,
+      height: 672,
     });
     view.setBackgroundColor("#ffffff");
     view.webContents.loadFile(path.join(__dirname, "../views/loading.html"));
@@ -103,19 +132,15 @@ ipcMain.handle("get-path", async () => {
     if (!canceled && filePaths.length > 0) {
       const projectPath = filePaths[0];
 
-      BrowserWindow.getFocusedWindow().setBrowserView(view);
-      view.setBounds({
-        x: 50,
-        y: 220,
-        width: 700,
-        height: 600,
-      });
-      view.setBackgroundColor("#ffffff");
-      view.webContents.loadFile(path.join(__dirname, "../views/loading.html"));
-
-      exec(`PORT=${portNumber} BROWSER=none npm run start`, {
-        cwd: projectPath,
-      });
+      exec(
+        `PORT=${portNumber} BROWSER=none npm run start`,
+        {
+          cwd: projectPath,
+        },
+        (error, stdout, stderr) => {
+          handleErrorMessage(stderr);
+        },
+      );
 
       await waitOn({ resources: [`http://localhost:${portNumber}`] });
       view.webContents.loadURL(`http://localhost:${portNumber}`);
