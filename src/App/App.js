@@ -34,7 +34,7 @@ const Nav = styled.nav`
   }
 `;
 
-const Label = styled.label`
+const DriectoryOpenButton = styled.button`
   width: 200px;
   height: 30px;
   color: #7289da;
@@ -51,10 +51,6 @@ const Label = styled.label`
     background: #7289da;
     color: #ffffff;
   }
-`;
-
-const InputDirectory = styled.input`
-  display: none;
 `;
 
 const InputCommand = styled.input`
@@ -98,13 +94,12 @@ function App() {
       <Nav>
         <div>
           <p>실행하고 싶은 프로젝트의 폴더를 선택해주세요.</p>
-          <Label htmlFor="directory">
-            <div>폴더 업로드하기</div>
-          </Label>
-          <InputDirectory type="file" webkitdirectory="" id="directory" />
+          <DriectoryOpenButton id="directoryButton">
+            폴더 선택
+          </DriectoryOpenButton>
         </div>
         <div>
-          <p>npm 실행 명령어를 입력해주세요.</p>
+          <p id="p">npm 실행 명령어를 입력해주세요.</p>
           <InputCommand type="text" placeholder="ex) npm run start" />
         </div>
       </Nav>
