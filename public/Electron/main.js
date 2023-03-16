@@ -41,6 +41,7 @@ app.on("window-all-closed", () => {
       if (error) {
         console.error("Failed to kill server process:", error);
       }
+
       app.quit();
     },
   );
@@ -60,25 +61,30 @@ ipcMain.handle("get-path", async () => {
 
       await waitOn({ resources: ["http://localhost:3000"] });
 
-      return "http://localhost:3000";
+      const win = BrowserWindow.getFocusedWindow();
+      const view = new BrowserView();
+
+      win.setBrowserView(view);
+      view.setBounds({
+        x: 50,
+        y: 220,
+        width: 700,
+        height: 600,
+      });
+
+      view.webContents.loadURL("http://localhost:3000");
+
+      const JScodes = `
+        const data = document.querySelector("#root").getAttribute("key");
+        JSON.parse(data);
+      `;
+      const data = await view.webContents.executeJavaScript(JScodes, true);
+
+      return data;
     }
+
     return null;
   } catch (error) {
-    throw new Error("유효하지않은 url입니다.");
+    return console.error("유효하지않은 url입니다.", error);
   }
-});
-
-ipcMain.on("load-url", (event, url) => {
-  const win = BrowserWindow.getFocusedWindow();
-  const view = new BrowserView();
-
-  win.setBrowserView(view);
-  view.setBounds({
-    x: 50,
-    y: 220,
-    width: 700,
-    height: 600,
-  });
-
-  view.webContents.loadURL(url);
 });
