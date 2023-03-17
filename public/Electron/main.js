@@ -152,6 +152,8 @@ ipcMain.handle("get-path", async () => {
         JSON.parse(data);
       `;
       const data = await view.webContents.executeJavaScript(JScodes, true);
+
+      BrowserWindow.getFocusedWindow().webContents.send("send-fiberData", data);
     }
 
     return null;

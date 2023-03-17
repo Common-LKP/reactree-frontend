@@ -5,7 +5,12 @@
     "node": true,
     "browser": true
   },
-  "extends": ["airbnb", "airbnb/hooks", "plugin:prettier/recommended"],
+  "extends": [
+    "airbnb",
+    "airbnb/hooks",
+    "plugin:prettier/recommended",
+    "plugin:react/jsx-runtime"
+  ],
   "rules": {
     "react/jsx-filename-extension": [
       1,

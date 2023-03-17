@@ -1,6 +1,4 @@
-/* eslint-disable consistent-return */
 /* eslint-disable no-underscore-dangle */
-import React from "react";
 import ReactDOM from "react-dom/client";
 
 import App from "./App/App";
@@ -11,17 +9,6 @@ import Node from "./utils/Node";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<App />);
 
-const seen = new WeakSet();
-const getCircularReplacer = (key, value) => {
-  if (typeof value === "object" && value !== null) {
-    if (seen.has(value)) return;
-
-    seen.add(value);
-  }
-
-  return value;
-};
-
 // 현재 작성중인 로직 확인용(정상배포 전 삭제 필요)
 const fiberRootNode = deepCopy(root._internalRoot);
 const fiberTree = new Node();
@@ -30,5 +17,5 @@ setTimeout(() => {
   createNode(fiberRootNode.current.alternate, fiberTree);
   // 트리구조 확인용 콘솔
   // console.log(fiberTree);
-  console.log(JSON.stringify(fiberTree, getCircularReplacer, 2));
+  // console.log(JSON.stringify(fiberTree, getCircularReplacer, 2));
 }, 0);
