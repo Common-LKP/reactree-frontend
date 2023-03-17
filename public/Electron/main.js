@@ -5,10 +5,51 @@ const {
   ipcMain,
   BrowserView,
   dialog,
+  globalShortcut,
 } = require("electron");
-const { exec } = require("child_process");
+const { exec, execSync } = require("child_process");
 const path = require("path");
+const os = require("os");
 const waitOn = require("wait-on");
+
+let defaultPort = 3000;
+
+const checkPortNumber = async () => {
+  const stdout = execSync(
+    "netstat -anv | grep LISTEN | awk '{print $4}'",
+  ).toString();
+  const lines = stdout.split(os.EOL);
+
+  if (lines[lines.length - 1] === "") {
+    lines.pop();
+  }
+
+  for (let i = 0; i < lines.length; i += 1) {
+    lines[i] = lines[i].slice(lines[i].indexOf(".") + 1);
+  }
+
+  const portArray = lines
+    .filter(port => port > 999 && port < 10000)
+    .map(Number);
+  portArray.sort((a, b) => a - b);
+  portArray.forEach(port => {
+    if (port === defaultPort) defaultPort += 1;
+  });
+
+  return defaultPort;
+};
+
+const quitApplication = () => {
+  exec(
+    `lsof -i :${defaultPort} | grep LISTEN | awk '{print $2}' | xargs kill`,
+    (error, stdout, stderr) => {
+      if (error) {
+        console.error("Failed to kill server process:", error);
+      }
+      app.quit();
+    },
+  );
+};
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -27,6 +68,12 @@ const createWindow = () => {
 app.whenReady().then(() => {
   createWindow();
 
+  if (process.platform === "darwin") {
+    globalShortcut.register("Command+Q", () => {
+      quitApplication();
+    });
+  }
+
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
@@ -34,53 +81,50 @@ app.whenReady().then(() => {
   });
 });
 
-app.on("window-all-closed", () => {
-  exec(
-    "lsof -i :3000 | grep LISTEN | awk '{print $2}' | xargs kill",
-    (error, stdout, stderr) => {
-      if (error) {
-        console.error("Failed to kill server process:", error);
-      }
-
-      app.quit();
-    },
-  );
-});
-
 ipcMain.handle("get-path", async () => {
   try {
     const { canceled, filePaths } = await dialog.showOpenDialog({
       properties: ["openDirectory"],
     });
+    const view = new BrowserView();
+
+    BrowserWindow.getFocusedWindow().setBrowserView(view);
+    view.setBounds({
+      x: 50,
+      y: 220,
+      width: 700,
+      height: 600,
+    });
+    view.setBackgroundColor("#ffffff");
+    view.webContents.loadFile(path.join(__dirname, "../views/loading.html"));
+
+    const portNumber = await checkPortNumber();
 
     if (!canceled && filePaths.length > 0) {
       const projectPath = filePaths[0];
-      exec("BROWSER=none npm run start", {
-        cwd: projectPath,
-      });
 
-      await waitOn({ resources: ["http://localhost:3000"] });
-
-      const win = BrowserWindow.getFocusedWindow();
-      const view = new BrowserView();
-
-      win.setBrowserView(view);
+      BrowserWindow.getFocusedWindow().setBrowserView(view);
       view.setBounds({
         x: 50,
         y: 220,
         width: 700,
         height: 600,
       });
+      view.setBackgroundColor("#ffffff");
+      view.webContents.loadFile(path.join(__dirname, "../views/loading.html"));
 
-      view.webContents.loadURL("http://localhost:3000");
+      exec(`PORT=${portNumber} BROWSER=none npm run start`, {
+        cwd: projectPath,
+      });
 
+      await waitOn({ resources: [`http://localhost:${portNumber}`] });
+      view.webContents.loadURL(`http://localhost:${portNumber}`);
+      
       const JScodes = `
         const data = document.querySelector("#root").getAttribute("key");
         JSON.parse(data);
       `;
       const data = await view.webContents.executeJavaScript(JScodes, true);
-
-      return data;
     }
 
     return null;
