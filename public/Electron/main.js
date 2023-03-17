@@ -14,7 +14,7 @@ const waitOn = require("wait-on");
 
 let defaultPort = 3000;
 
-const checkPortNumber = async () => {
+const checkPortNumber = () => {
   const stdout = execSync(
     "netstat -anv | grep LISTEN | awk '{print $4}'",
   ).toString();
@@ -40,15 +40,14 @@ const checkPortNumber = async () => {
 };
 
 const quitApplication = () => {
-  exec(
-    `lsof -i :${defaultPort} | grep LISTEN | awk '{print $2}' | xargs kill`,
-    (error, stdout, stderr) => {
-      if (error) {
-        console.error("Failed to kill server process:", error);
-      }
-      app.quit();
-    },
-  );
+  try {
+    execSync(
+      `lsof -i :${defaultPort} | grep LISTEN | awk '{print $2}' | xargs kill`,
+    );
+    app.quit();
+  } catch (error) {
+    // console.error("Failed to kill server process:", error);
+  }
 };
 
 const handleErrorMessage = error => {
@@ -71,12 +70,14 @@ const handleErrorMessage = error => {
     }
   }
 
-  dialog.showMessageBox({
-    buttons: ["확인"],
-    title: "Error!",
-    message: "Error!",
-    detail,
-  });
+  if (detail) {
+    dialog.showMessageBox({
+      buttons: ["확인"],
+      title: "Error!",
+      message: "Error",
+      detail,
+    });
+  }
 };
 
 const createWindow = () => {
@@ -127,7 +128,7 @@ ipcMain.handle("get-path", async () => {
     view.setBackgroundColor("#ffffff");
     view.webContents.loadFile(path.join(__dirname, "../views/loading.html"));
 
-    const portNumber = await checkPortNumber();
+    const portNumber = checkPortNumber();
 
     if (!canceled && filePaths.length > 0) {
       const projectPath = filePaths[0];
