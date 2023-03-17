@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import D3Tree from "../components/D3tree";
 import GlobalStyles from "../styles/GlobalStyles.styles";
 
 const EntryWrapper = styled.div`
@@ -105,7 +106,9 @@ function App() {
       </Nav>
       <Main>
         <div>렌더링 화면 구역</div>
-        <div />
+        <div>
+          <D3Tree />
+        </div>
       </Main>
     </EntryWrapper>
   );
