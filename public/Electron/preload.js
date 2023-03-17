@@ -1,17 +1,7 @@
 const { contextBridge, ipcRenderer } = require("electron");
+window.ipcRenderer = require("electron").ipcRenderer;
 
 contextBridge.exposeInMainWorld("electronAPI", {
-  openFileDialog: async () => {
-    try {
-      const result = await ipcRenderer.invoke("get-path");
-
-      return result;
-    } catch (error) {
-      return console.error("Error in openFileDialog:", error);
-    }
-  },
-});
-
-contextBridge.exposeInMainWorld("TreeAPI", {
-  treeData: () => ipcRenderer.invoke("treeData"),
+  openFileDialog: () => ipcRenderer.invoke("get-path"),
+  treeData: () => ipcRenderer.invoke("treeData").then(result => result),
 });

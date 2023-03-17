@@ -16,8 +16,8 @@ const createWindow = () => {
     height: 1500,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
-      nodeIntegration: false,
-      contextIsolation: true,
+      nodeIntegration: true,
+      contextIsolation: false,
     },
   });
 
@@ -85,6 +85,8 @@ ipcMain.handle("get-path", async () => {
 
     return null;
   } catch (error) {
-    return console.error("유효하지않은 url입니다.", error);
+    return console.error(error);
   }
 });
+
+ipcMain.handle("treeData", async () => {});
