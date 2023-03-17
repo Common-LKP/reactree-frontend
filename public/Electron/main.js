@@ -145,13 +145,16 @@ ipcMain.handle("get-path", async () => {
 
       await waitOn({ resources: [`http://localhost:${portNumber}`] });
       view.webContents.loadURL(`http://localhost:${portNumber}`);
+      
+      const JScodes = `
+        const data = document.querySelector("#root").getAttribute("key");
+        JSON.parse(data);
+      `;
+      const data = await view.webContents.executeJavaScript(JScodes, true);
     }
+
     return null;
   } catch (error) {
-    throw new Error("유효하지않은 url입니다.");
+    return console.error(error);
   }
-});
-
-app.on("window-all-closed", () => {
-  quitApplication();
 });
