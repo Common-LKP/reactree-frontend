@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import Modal from "./Modal";
-import getTreeSVG from "../utils/getTreeSVG_vertical";
+import getTreeSVG from "../utils/getTreeSVG";
 import createNode from "../utils/reactFiberTree";
 import Node from "../utils/Node";
 import mockTreeData from "../assets/mockTreeData.json";
