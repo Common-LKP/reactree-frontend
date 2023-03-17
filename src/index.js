@@ -21,6 +21,6 @@ const fiberTree = new Node();
 setTimeout(() => {
   createNode(fiberRootNode.current.alternate, fiberTree);
   // 트리구조 확인용 콘솔
-  console.log(fiberTree);
-  console.log(JSON.stringify(fiberTree, null, 2));
+  // console.log(fiberTree);
+  // console.log(JSON.stringify(fiberTree, null, 2));
 }, 0);
