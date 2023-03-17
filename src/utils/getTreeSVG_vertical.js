@@ -7,22 +7,18 @@ export default function Tree(
   data,
   {
     // data is either tabular (array of objects) or hierarchy (nested objects)
-    path, // as an alternative to id and parentId, returns an array identifier, imputing internal nodes
-    id = Array.isArray(data) ? d => d.id : null, // if tabular data, given a d in data, returns a unique identifier (string)
-    parentId = Array.isArray(data) ? d => d.parentId : null, // if tabular data, given a node d, returns its parent’s identifier
     children, // if hierarchical data, given a d in data, returns its children
     tree = d3.tree, // layout algorithm (typically d3.tree or d3.cluster)
     sort, // how to sort nodes prior to layout (e.g., (a, b) => d3.descending(a.height, b.height))
     label, // given a node d, returns the display name
     title, // given a node d, returns its hover text
-    link, // given a node d, its link (if any)
+    link = null, // given a node d, its link (if any)
     linkTarget = "_blank", // the target attribute for links (if any)
     width = 1000, // outer width, in pixels
     height = 1000, // outer height, in pixels
     r = 30, // radius of nodes
     padding = 5, // horizontal padding for first and last column // 증가하면 가지가 짧아집니다.
     fill = "#999", // fill for nodes
-    fillOpacity, // fill opacity for nodes
     stroke = "#555", // stroke for links
     strokeWidth = 10, // stroke width for links
     strokeOpacity = 0.4, // stroke opacity for links
@@ -37,12 +33,7 @@ export default function Tree(
   // to convert tabular data to a hierarchy; otherwise we assume that the data is
   // specified as an object {children} with nested objects (a.k.a. the “flare.json”
   // format), and use d3.hierarchy.
-  const root =
-    path != null
-      ? d3.stratify().path(path)(data)
-      : id != null || parentId != null
-      ? d3.stratify().id(id).parentId(parentId)(data)
-      : d3.hierarchy(data, children);
+  const root = d3.hierarchy(data, children);
 
   // Sort the nodes.
   if (sort != null) root.sort(sort);

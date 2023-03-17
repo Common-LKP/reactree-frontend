@@ -158,3 +158,7 @@ ipcMain.handle("get-path", async () => {
     return console.error(error);
   }
 });
+
+ipcMain.on("send-node-data", (event, data) => {
+  BrowserWindow.getFocusedWindow().webContents.send("get-node-data", data);
+});

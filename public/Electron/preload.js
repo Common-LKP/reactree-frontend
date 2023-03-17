@@ -3,5 +3,6 @@ window.ipcRenderer = require("electron").ipcRenderer;
 
 contextBridge.exposeInMainWorld("electronAPI", {
   openFileDialog: () => ipcRenderer.invoke("get-path"),
-  treeData: () => ipcRenderer.invoke("treeData").then(result => result),
+  sendTreeData: data => ipcRenderer.send("send-node-data", data),
+  getTreeData: data => ipcRenderer.on("get-node-data", data),
 });

@@ -1,59 +1,64 @@
-/* eslint-disable react/react-in-jsx-scope */
-/* eslint-disable no-shadow */
-/* eslint-disable no-unused-vars */
-/* eslint-disable prettier/prettier */
-import { useEffect, useRef } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import getTreeSVG from "../utils/getTreeSVG_vertical";
+import Modal from "./Modal";
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  .modal {
+    position: absolute;
+  }
+`;
 
 export default function D3Tree() {
-  const treeData = {
-    name: "CompFirst",
-    children: [
-      {
-        name: "CompSecret",
-        children: [],
-      },
-      {
-        name: "CompSecond",
-        children: [
-          {
-            name: "CompThird",
-            children: [],
-          },
-          {
-            name: "CompThird",
-            children: [],
-          },
-        ],
-      },
-    ],
-  };
-
-  const chart = getTreeSVG(treeData, {
-    label: d => d.name,
-    title: (d, n) =>
-      `${n
-        .ancestors()
-        .reverse()
-        .map(d => d.data.name)
-        .join(".")}`, // hover text
-    link: (d, n) => `https://www.google.com`,
-  });
-
   const svg = useRef(null);
+  const [nodeId, setNodeId] = useState("");
+  const [nodeData, setNodeData] = useState(null);
 
   useEffect(() => {
-    if (svg.current) {
-      svg.current.appendChild(chart);
+    async function getNodeData() {
+      await window.electronAPI.getTreeData((event, value) => {
+        setNodeData(value);
+      });
     }
-  }, [chart]);
+
+    getNodeData();
+  }, []);
+
+  useEffect(() => {
+    if (!nodeData) return;
+    const chart = getTreeSVG(nodeData, {
+      width: 800,
+      height: 700,
+      label: d => d.name,
+    });
+
+    svg.current.appendChild(chart);
+
+    const modal = document.querySelector(".modal");
+    const componentNodes = document.querySelectorAll("svg circle");
+    componentNodes.forEach(node => {
+      node.addEventListener("mouseover", e => {
+        setNodeId(e.target.id);
+      });
+      node.addEventListener("mousemove", e => {
+        modal.style.left = `${e.clientX + 10}px`;
+        modal.style.top = `${e.clientY - 110}px`;
+      });
+      node.addEventListener("mouseout", () => {
+        setNodeId("");
+      });
+    });
+  }, [nodeData]);
 
   return (
     <Wrapper>
       <div ref={svg} />
+      <div className="modal">
+        <Modal nodeId={nodeId}>
+          <div>name: {nodeId}</div>
+        </Modal>
+      </div>
     </Wrapper>
   );
 }
