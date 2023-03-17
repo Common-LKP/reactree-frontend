@@ -88,5 +88,3 @@ ipcMain.handle("get-path", async () => {
     return console.error(error);
   }
 });
-
-ipcMain.handle("treeData", async () => {});
