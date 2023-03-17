@@ -46,7 +46,7 @@ const quitApplication = () => {
     );
     app.quit();
   } catch (error) {
-    // console.error("Failed to kill server process:", error);
+    console.error("Failed to kill server process:", error);
   }
 };
 
@@ -145,7 +145,7 @@ ipcMain.handle("get-path", async () => {
 
       await waitOn({ resources: [`http://localhost:${portNumber}`] });
       view.webContents.loadURL(`http://localhost:${portNumber}`);
-      
+
       const JScodes = `
         const data = document.querySelector("#root").getAttribute("key");
         JSON.parse(data);
