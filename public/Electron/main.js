@@ -28,9 +28,9 @@ const checkPortNumber = () => {
     lines.pop();
   }
 
-  for (let i = 0; i < lines.length; i += 1) {
-    lines[i] = lines[i].slice(lines[i].indexOf(".") + 1);
-  }
+  lines.forEach((line, index) => {
+    lines[index] = line.slice(line.indexOf(".") + 1);
+  });
 
   const portArray = lines
     .filter(port => port > 999 && port < 10000)
@@ -60,6 +60,7 @@ const quitApplication = () => {
 const handleErrorMessage = error => {
   const lines = error.split(os.EOL);
   let detail;
+  console.log(lines[0]);
 
   if (lines[lines.length - 1] === "") {
     lines.pop();
@@ -73,6 +74,11 @@ const handleErrorMessage = error => {
 
     if (lines[i].includes("Cannot find module")) {
       detail = "모듈정보를 찾을 수 없습니다.";
+      break;
+    }
+
+    if (lines[i].includes("command not found")) {
+      detail = "올바르지 않은 명령어입니다.";
       break;
     }
   }

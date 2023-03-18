@@ -93,8 +93,6 @@ function App() {
     return path ? setHasPath(true) : null;
   });
 
-  console.log(directoryPath);
-
   return (
     <EntryWrapper>
       <GlobalStyles />
