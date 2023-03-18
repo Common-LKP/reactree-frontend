@@ -37,8 +37,6 @@ export default function D3Tree() {
 
   useEffect(() => {
     const chart = getTreeSVG(treeData, {
-      width: 800,
-      height: 1000,
       label: d => d.name,
     });
 
@@ -47,6 +45,7 @@ export default function D3Tree() {
 
     const modal = document.querySelector(".modal");
     const componentNodes = document.querySelectorAll("svg circle");
+
     componentNodes.forEach(node => {
       node.addEventListener("mouseover", event => {
         setNodeId(event.target.id);
