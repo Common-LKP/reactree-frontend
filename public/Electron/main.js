@@ -50,8 +50,7 @@ const quitApplication = () => {
     execSync(
       `lsof -i :${portNumber} | grep LISTEN | awk '{print $2}' | xargs kill`,
     );
-
-    if (process.platform !== "darwin") app.quit();
+    app.quit();
   } catch (error) {
     console.error("Failed to kill server process:", error);
   }
