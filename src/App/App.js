@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { useState } from "react";
 import D3Tree from "../components/D3tree";
 import GlobalStyles from "../styles/GlobalStyles.styles";
 
@@ -36,8 +37,8 @@ const Nav = styled.nav`
   }
 `;
 
-const DriectoryOpenButton = styled.button`
-  width: 200px;
+const Button = styled.button`
+  min-width: 250px;
   height: 30px;
   color: #7289da;
   background: #ffffff;
@@ -53,22 +54,6 @@ const DriectoryOpenButton = styled.button`
   &:hover {
     background: #7289da;
     color: #ffffff;
-  }
-`;
-
-const InputCommand = styled.input`
-  width: 250px;
-  height: 30px;
-  color: #7289da;
-  background: #ffffff;
-  border: 2px solid #7289da;
-  border-radius: 10px;
-  font-weight: 500;
-  cursor: pointer;
-  text-align: center;
-
-  ::placeholder {
-    text-align: center;
   }
 `;
 
@@ -90,6 +75,13 @@ const Main = styled.main`
 `;
 
 function App() {
+  const [hasPath, setHasPath] = useState(false);
+  const [directoryPath, setDirectoryPath] = useState("");
+  window.electronAPI.sendFilePath((event, path) => {
+    setDirectoryPath(path);
+    return path ? setHasPath(true) : null;
+  });
+
   return (
     <EntryWrapper>
       <GlobalStyles />
@@ -99,13 +91,20 @@ function App() {
       <Nav>
         <div>
           <p>실행하고 싶은 프로젝트의 폴더를 선택해주세요.</p>
-          <DriectoryOpenButton id="directoryButton">
-            폴더 선택
-          </DriectoryOpenButton>
+          <Button id="directoryButton">
+            {hasPath ? directoryPath : "폴더 선택"}
+          </Button>
         </div>
         <div>
           <p>npm 실행 명령어를 입력해주세요.</p>
-          <InputCommand type="text" placeholder="ex) npm run start" />
+          <Button
+            id="npmStartButton"
+            type="text"
+            placeholder="ex) npm start"
+            disabled={!hasPath}
+          >
+            npm start
+          </Button>
         </div>
       </Nav>
       <Main>

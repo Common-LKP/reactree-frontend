@@ -12,6 +12,10 @@ const path = require("path");
 const os = require("os");
 const waitOn = require("wait-on");
 
+const fileInfo = {
+  filePath: null,
+};
+
 const checkPortNumber = () => {
   let defaultPort = 3000;
 
@@ -24,9 +28,9 @@ const checkPortNumber = () => {
     lines.pop();
   }
 
-  for (let i = 0; i < lines.length; i += 1) {
-    lines[i] = lines[i].slice(lines[i].indexOf(".") + 1);
-  }
+  lines.forEach((line, index) => {
+    lines[index] = line.slice(line.indexOf(".") + 1);
+  });
 
   const portArray = lines
     .filter(port => port > 999 && port < 10000)
@@ -55,6 +59,7 @@ const quitApplication = () => {
 const handleErrorMessage = error => {
   const lines = error.split(os.EOL);
   let detail;
+  console.log(lines[0]);
 
   if (lines[lines.length - 1] === "") {
     lines.pop();
@@ -118,43 +123,14 @@ ipcMain.handle("get-path", async () => {
     const { canceled, filePaths } = await dialog.showOpenDialog({
       properties: ["openDirectory"],
     });
-    const view = new BrowserView();
-
-    BrowserWindow.getFocusedWindow().setBrowserView(view);
-    view.setBounds({
-      x: 20,
-      y: 184,
-      width: 480,
-      height: 672,
-    });
-    view.setBackgroundColor("#ffffff");
-    view.webContents.loadFile(path.join(__dirname, "../views/loading.html"));
 
     if (!canceled && filePaths.length > 0) {
-      const projectPath = filePaths[0];
+      [fileInfo.filePath] = filePaths;
 
-      exec(
-        `PORT=${portNumber} BROWSER=none npm start`,
-        {
-          cwd: projectPath,
-        },
-        (error, stdout, stderr) => {
-          handleErrorMessage(stderr);
-        },
+      BrowserWindow.getFocusedWindow().webContents.send(
+        "send-file-path",
+        fileInfo.filePath,
       );
-
-      await waitOn({ resources: [`http://localhost:${portNumber}`] });
-      view.webContents.loadURL(`http://localhost:${portNumber}`);
-
-      /* Note: 데이터 받아오는방법 2번
-      const JScodes = `
-        const data = document.querySelector("#root").getAttribute("key");
-        JSON.parse(data);
-      `;
-      const data = await view.webContents.executeJavaScript(JScodes, true);
-
-      BrowserWindow.getFocusedWindow().webContents.send("send-fiberData", data);
-      */
     }
 
     return null;
@@ -163,6 +139,37 @@ ipcMain.handle("get-path", async () => {
   }
 });
 
-ipcMain.on("send-node-data", (event, data) => {
-  BrowserWindow.getFocusedWindow().webContents.send("get-node-data", data);
+ipcMain.handle("npmStartButton", async (event, result) => {
+  const view = new BrowserView();
+  BrowserWindow.getFocusedWindow().setBrowserView(view);
+  view.setBounds({
+    x: 20,
+    y: 184,
+    width: 480,
+    height: 672,
+  });
+  view.setBackgroundColor("#ffffff");
+
+  view.webContents.loadFile(path.join(__dirname, "../views/loading.html"));
+
+  exec(
+    `PORT=${portNumber} BROWSER=none npm start`,
+    {
+      cwd: fileInfo.filePath,
+    },
+    (error, stdout, stderr) => {
+      handleErrorMessage(stderr);
+    },
+  );
+
+  await waitOn({ resources: [`http://localhost:${portNumber}`] });
+  view.webContents.loadURL(`http://localhost:${portNumber}`);
+
+  const JScodes = `
+    const data = document.querySelector("#root").getAttribute("key");
+    JSON.parse(data);
+  `;
+  const data = await view.webContents.executeJavaScript(JScodes, true);
+
+  BrowserWindow.getFocusedWindow().webContents.send("send-fiberData", data);
 });

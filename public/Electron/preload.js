@@ -5,4 +5,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
   sendNodeData: data => ipcRenderer.send("send-node-data", data),
   getNodeData: callback => ipcRenderer.on("get-node-data", callback),
   fiberData: callback => ipcRenderer.on("send-fiberData", callback),
+  commandData: inputValue => ipcRenderer.invoke("npmStartButton", inputValue),
+  sendFilePath: path => ipcRenderer.on("send-file-path", path),
 });
