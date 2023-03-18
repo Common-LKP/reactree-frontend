@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 function Node() {
   this.name = "";
   this.props = [];

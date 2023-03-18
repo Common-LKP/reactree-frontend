@@ -35,8 +35,8 @@ const Nav = styled.nav`
   }
 `;
 
-const DriectoryOpenButton = styled.button`
-  width: 200px;
+const Button = styled.button`
+  min-width: 250px;
   height: 30px;
   color: #7289da;
   background: #ffffff;
@@ -51,21 +51,6 @@ const DriectoryOpenButton = styled.button`
   &:hover {
     background: #7289da;
     color: #ffffff;
-  }
-`;
-
-const InputCommand = styled.input`
-  width: 250px;
-  height: 30px;
-  color: #7289da;
-  background: #ffffff;
-  border: 2px solid #7289da;
-  border-radius: 10px;
-  font-weight: 500;
-  cursor: pointer;
-  text-align: center;
-  ::placeholder {
-    text-align: center;
   }
 `;
 
@@ -102,18 +87,20 @@ function App() {
       <Nav>
         <div>
           <p>실행하고 싶은 프로젝트의 폴더를 선택해주세요.</p>
-          <DriectoryOpenButton id="directoryButton">
+          <Button id="directoryButton">
             {hasPath ? directoryPath : "폴더 선택"}
-          </DriectoryOpenButton>
+          </Button>
         </div>
         <div>
           <p>npm 실행 명령어를 입력해주세요.</p>
-          <InputCommand
-            id="commandInput"
+          <Button
+            id="npmStartButton"
             type="text"
-            placeholder="ex) npm run start"
+            placeholder="ex) npm start"
             disabled={!hasPath}
-          />
+          >
+            npm start
+          </Button>
         </div>
       </Nav>
       <Main>

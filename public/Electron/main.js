@@ -76,11 +76,6 @@ const handleErrorMessage = error => {
       detail = "모듈정보를 찾을 수 없습니다.";
       break;
     }
-
-    if (lines[i].includes("command not found")) {
-      detail = "올바르지 않은 명령어입니다.";
-      break;
-    }
   }
 
   if (detail) {
@@ -145,7 +140,7 @@ ipcMain.handle("get-path", async () => {
   }
 });
 
-ipcMain.handle("commandInput", async (event, result) => {
+ipcMain.handle("npmStartButton", async (event, result) => {
   const view = new BrowserView();
   BrowserWindow.getFocusedWindow().setBrowserView(view);
   view.setBounds({
@@ -155,10 +150,11 @@ ipcMain.handle("commandInput", async (event, result) => {
     height: 672,
   });
   view.setBackgroundColor("#ffffff");
+
   view.webContents.loadFile(path.join(__dirname, "../views/loading.html"));
 
   exec(
-    `PORT=${portNumber} BROWSER=none ${result}`,
+    `PORT=${portNumber} BROWSER=none npm start`,
     {
       cwd: fileInfo.filePath,
     },
