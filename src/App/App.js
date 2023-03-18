@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import styled from "styled-components";
 import D3Tree from "../components/D3tree";
 import GlobalStyles from "../styles/GlobalStyles.styles";
