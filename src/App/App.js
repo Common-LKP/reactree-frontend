@@ -23,11 +23,13 @@ const Nav = styled.nav`
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   > div {
     width: 48%;
     display: flex;
     flex-direction: column;
     align-items: center;
+
     > p {
       margin-bottom: 8px;
     }
@@ -47,6 +49,7 @@ const DriectoryOpenButton = styled.button`
   align-items: center;
   justify-content: center;
   transition: 0.3s all ease;
+
   &:hover {
     background: #7289da;
     color: #ffffff;
@@ -63,6 +66,7 @@ const InputCommand = styled.input`
   font-weight: 500;
   cursor: pointer;
   text-align: center;
+
   ::placeholder {
     text-align: center;
   }
@@ -73,6 +77,7 @@ const Main = styled.main`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+
   > div {
     width: 48%;
     height: calc(100vh - 200px);
