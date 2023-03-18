@@ -26,10 +26,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 document.addEventListener("DOMContentLoaded", async () => {
   const inputElement = await getElementByIdAsync("npmStartButton");
-  inputElement.addEventListener("click", async event => {
+  inputElement.addEventListener("click", async () => {
     try {
-      const inputValue = event.target.value;
-      await window.electronAPI.commandData(inputValue);
+      await window.electronAPI.commandData();
     } catch (error) {
       console.error(error);
     }

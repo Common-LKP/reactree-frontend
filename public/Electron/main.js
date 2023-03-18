@@ -59,7 +59,6 @@ const quitApplication = () => {
 const handleErrorMessage = error => {
   const lines = error.split(os.EOL);
   let detail;
-  console.log(lines[0]);
 
   if (lines[lines.length - 1] === "") {
     lines.pop();
@@ -154,9 +153,7 @@ ipcMain.handle("npmStartButton", async (event, result) => {
 
   exec(
     `PORT=${portNumber} BROWSER=none npm start`,
-    {
-      cwd: fileInfo.filePath,
-    },
+    { cwd: fileInfo.filePath },
     (error, stdout, stderr) => {
       handleErrorMessage(stderr);
     },

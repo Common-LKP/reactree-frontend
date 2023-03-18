@@ -5,25 +5,25 @@
   "children": [
     {
       "name": "CompSecret",
-      "props": [],
-      "state": [],
+      "props": ["secret"],
+      "state": ["state1"],
       "children": []
     },
     {
       "name": "CompSecond",
-      "props": [],
-      "state": [],
+      "props": ["second"],
+      "state": ["secondState"],
       "children": [
         {
           "name": "CompThird",
-          "props": [],
-          "state": [],
+          "props": ["Third"],
+          "state": ["thirdState"],
           "children": []
         },
         {
           "name": "CompThird",
-          "props": [],
-          "state": [],
+          "props": ["Thirdasdasd2"],
+          "state": ["thirdState2"],
           "children": []
         }
       ]

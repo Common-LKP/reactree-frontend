@@ -1,8 +1,6 @@
-/* eslint-disable no-console */
-/* eslint-disable func-names */
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
+import { hierarchy } from "d3";
 import Modal from "./Modal";
 import getTreeSVG from "../utils/getTreeSVG";
 import createNode from "../utils/reactFiberTree";
@@ -17,6 +15,7 @@ const Wrapper = styled.div`
 
 export default function D3Tree() {
   const [treeData, setTreeData] = useState(mockTreeData);
+  const [data, setData] = useState(hierarchy(mockTreeData));
   const fiberTree = new Node();
 
   const getTreeData = async function () {
@@ -24,6 +23,7 @@ export default function D3Tree() {
       window.electronAPI.fiberData((event, value) => {
         createNode(value, fiberTree);
         setTreeData(fiberTree);
+        setData(hierarchy(fiberTree));
       });
     } catch (error) {
       console.error(error);
@@ -32,10 +32,12 @@ export default function D3Tree() {
 
   useEffect(() => {
     getTreeData();
-  }, []);
+  });
 
   const svg = useRef();
   const [nodeId, setNodeId] = useState("");
+  const [nodeProps, setNodeProps] = useState(null);
+  const [nodeState, setNodeState] = useState(null);
 
   useEffect(() => {
     const chart = getTreeSVG(treeData, {
@@ -50,7 +52,14 @@ export default function D3Tree() {
 
     componentNodes.forEach(node => {
       node.addEventListener("mouseover", event => {
-        setNodeId(event.target.id);
+        const nodeData = data
+          .descendants()
+          .find(d => d.data.name === event.target.id);
+        if (nodeData) {
+          setNodeId(nodeData.data.name);
+          setNodeProps(nodeData.data.props);
+          setNodeState(nodeData.data.state);
+        }
       });
       node.addEventListener("mousemove", event => {
         modal.style.left = `${event.clientX + 10}px`;
@@ -58,9 +67,11 @@ export default function D3Tree() {
       });
       node.addEventListener("mouseout", () => {
         setNodeId("");
+        setNodeProps(null);
+        setNodeState(null);
       });
     });
-  }, [treeData]);
+  }, [treeData, data]);
 
   return (
     <Wrapper>
@@ -68,8 +79,8 @@ export default function D3Tree() {
       <div className="modal">
         <Modal nodeId={nodeId}>
           <div>name: {nodeId}</div>
-          <div>props:</div>
-          <div>state:</div>
+          <div>props: {JSON.stringify(nodeProps)}</div>
+          <div>state: {JSON.stringify(nodeState)}</div>
         </Modal>
       </div>
     </Wrapper>
