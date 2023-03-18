@@ -1,4 +1,4 @@
-import * as d3 from "d3";
+import { curveBumpX, hierarchy, tree, create, link } from "d3";
 
 export default function getTreeSVG(
   data,
@@ -17,20 +17,19 @@ export default function getTreeSVG(
     strokeLinecap,
     halo = "#fff",
     haloWidth = 4,
-    curve = d3.curveBumpX,
+    curve = curveBumpX,
   } = {},
 ) {
-  const root = d3.hierarchy(data, children);
+  const root = hierarchy(data, children);
 
   const descendants = root.descendants();
   const L = descendants.map(d => label(d.data, d));
 
   const dx = 100;
   const dy = width / (root.height + padding);
-  d3.tree().nodeSize([dx, dy])(root);
+  tree().nodeSize([dx, dy])(root);
 
-  const svg = d3
-    .create("svg")
+  const svg = create("svg")
     .attr("viewBox", [-400, -100, width, height])
     .attr("width", width)
     .attr("height", height)
@@ -51,8 +50,7 @@ export default function getTreeSVG(
     .join("path")
     .attr(
       "d",
-      d3
-        .link(curve)
+      link(curve)
         .x(d => d.x)
         .y(d => d.y),
     );

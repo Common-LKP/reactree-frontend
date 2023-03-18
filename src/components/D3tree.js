@@ -48,12 +48,12 @@ export default function D3Tree() {
     const modal = document.querySelector(".modal");
     const componentNodes = document.querySelectorAll("svg circle");
     componentNodes.forEach(node => {
-      node.addEventListener("mouseover", e => {
-        setNodeId(e.target.id);
+      node.addEventListener("mouseover", event => {
+        setNodeId(event.target.id);
       });
-      node.addEventListener("mousemove", e => {
-        modal.style.left = `${e.clientX + 10}px`;
-        modal.style.top = `${e.clientY - modal.clientHeight - 10}px`;
+      node.addEventListener("mousemove", event => {
+        modal.style.left = `${event.clientX + 10}px`;
+        modal.style.top = `${event.clientY - modal.clientHeight - 10}px`;
       });
       node.addEventListener("mouseout", () => {
         setNodeId("");
