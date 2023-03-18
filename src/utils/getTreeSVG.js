@@ -5,9 +5,9 @@ export default function getTreeSVG(
   {
     children,
     label,
-    width,
-    height,
-    r = 30,
+    width = 800,
+    height = 1000,
+    r = 10,
     padding = 1,
     fill = "#999",
     stroke = "#555",

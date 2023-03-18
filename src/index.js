@@ -30,9 +30,7 @@ const getCircularReplacer = () => {
 
 setTimeout(() => {
   createNode(fiberRootNode.current.alternate, fiberTree);
-  window.electronAPI.sendTreeData(
+  window.electronAPI.sendNodeData(
     JSON.stringify(fiberTree, getCircularReplacer(), 2),
   );
-  // NOTE: 트리구조 확인용 콘솔
-  // console.log(JSON.stringify(fiberTree, getCircularReplacer(), 2));
 }, 0);

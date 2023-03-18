@@ -46,8 +46,7 @@ const quitApplication = () => {
     execSync(
       `lsof -i :${portNumber} | grep LISTEN | awk '{print $2}' | xargs kill`,
     );
-
-    if (process.platform !== "darwin") app.quit();
+    app.quit();
   } catch (error) {
     console.error("Failed to kill server process:", error);
   }
@@ -147,6 +146,7 @@ ipcMain.handle("get-path", async () => {
       await waitOn({ resources: [`http://localhost:${portNumber}`] });
       view.webContents.loadURL(`http://localhost:${portNumber}`);
 
+      /* Note: 데이터 받아오는방법 2번
       const JScodes = `
         const data = document.querySelector("#root").getAttribute("key");
         JSON.parse(data);
@@ -154,6 +154,7 @@ ipcMain.handle("get-path", async () => {
       const data = await view.webContents.executeJavaScript(JScodes, true);
 
       BrowserWindow.getFocusedWindow().webContents.send("send-fiberData", data);
+      */
     }
 
     return null;

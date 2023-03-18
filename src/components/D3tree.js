@@ -1,10 +1,7 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import Modal from "./Modal";
 import getTreeSVG from "../utils/getTreeSVG";
-import createNode from "../utils/reactFiberTree";
-import Node from "../utils/Node";
 import mockTreeData from "../assets/mockTreeData.json";
 
 const Wrapper = styled.div`
@@ -15,13 +12,11 @@ const Wrapper = styled.div`
 
 export default function D3Tree() {
   const [treeData, setTreeData] = useState(mockTreeData);
-  const fiberTree = new Node();
 
   const getTreeData = async function () {
     try {
-      window.electronAPI.fiberData((event, value) => {
-        createNode(value, fiberTree);
-        setTreeData(fiberTree);
+      window.electronAPI.getNodeData((event, value) => {
+        setTreeData(JSON.parse(value));
       });
     } catch (error) {
       console.error(error);
@@ -37,8 +32,6 @@ export default function D3Tree() {
 
   useEffect(() => {
     const chart = getTreeSVG(treeData, {
-      width: 800,
-      height: 1000,
       label: d => d.name,
     });
 

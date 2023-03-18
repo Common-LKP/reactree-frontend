@@ -2,7 +2,7 @@ const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("electronAPI", {
   openFileDialog: () => ipcRenderer.invoke("get-path"),
-  sendTreeData: data => ipcRenderer.send("send-node-data", data),
-  getTreeData: data => ipcRenderer.on("get-node-data", data),
+  sendNodeData: data => ipcRenderer.send("send-node-data", data),
+  getNodeData: callback => ipcRenderer.on("get-node-data", callback),
   fiberData: callback => ipcRenderer.on("send-fiberData", callback),
 });
