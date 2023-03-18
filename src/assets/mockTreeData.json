@@ -1,0 +1,32 @@
+{
+  "name": "CompFirst",
+  "props": ["props1", "props2"],
+  "state": ["state1, state2"],
+  "children": [
+    {
+      "name": "CompSecret",
+      "props": [],
+      "state": [],
+      "children": []
+    },
+    {
+      "name": "CompSecond",
+      "props": [],
+      "state": [],
+      "children": [
+        {
+          "name": "CompThird",
+          "props": [],
+          "state": [],
+          "children": []
+        },
+        {
+          "name": "CompThird",
+          "props": [],
+          "state": [],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

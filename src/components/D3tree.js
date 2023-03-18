@@ -1,59 +1,76 @@
-/* eslint-disable react/react-in-jsx-scope */
-/* eslint-disable no-shadow */
-/* eslint-disable no-unused-vars */
-/* eslint-disable prettier/prettier */
-import { useEffect, useRef } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import getTreeSVG from "../utils/getTreeSVG_vertical";
+import Modal from "./Modal";
+import getTreeSVG from "../utils/getTreeSVG";
+import createNode from "../utils/reactFiberTree";
+import Node from "../utils/Node";
+import mockTreeData from "../assets/mockTreeData.json";
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  .modal {
+    position: absolute;
+  }
+`;
 
 export default function D3Tree() {
-  const treeData = {
-    name: "CompFirst",
-    children: [
-      {
-        name: "CompSecret",
-        children: [],
-      },
-      {
-        name: "CompSecond",
-        children: [
-          {
-            name: "CompThird",
-            children: [],
-          },
-          {
-            name: "CompThird",
-            children: [],
-          },
-        ],
-      },
-    ],
+  const [treeData, setTreeData] = useState(mockTreeData);
+  const fiberTree = new Node();
+
+  const getTreeData = async function () {
+    try {
+      window.electronAPI.fiberData((event, value) => {
+        createNode(value, fiberTree);
+        setTreeData(fiberTree);
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const chart = getTreeSVG(treeData, {
-    label: d => d.name,
-    title: (d, n) =>
-      `${n
-        .ancestors()
-        .reverse()
-        .map(d => d.data.name)
-        .join(".")}`, // hover text
-    link: (d, n) => `https://www.google.com`,
-  });
+  useEffect(() => {
+    getTreeData();
+  }, []);
 
-  const svg = useRef(null);
+  const svg = useRef();
+  const [nodeId, setNodeId] = useState("");
 
   useEffect(() => {
-    if (svg.current) {
-      svg.current.appendChild(chart);
-    }
-  }, [chart]);
+    const chart = getTreeSVG(treeData, {
+      width: 800,
+      height: 1000,
+      label: d => d.name,
+    });
+
+    if (svg.current.firstChild) svg.current.removeChild(svg.current.firstChild);
+    svg.current.appendChild(chart);
+
+    const modal = document.querySelector(".modal");
+    const componentNodes = document.querySelectorAll("svg circle");
+    componentNodes.forEach(node => {
+      node.addEventListener("mouseover", event => {
+        setNodeId(event.target.id);
+      });
+      node.addEventListener("mousemove", event => {
+        modal.style.left = `${event.clientX + 10}px`;
+        modal.style.top = `${event.clientY - modal.clientHeight - 10}px`;
+      });
+      node.addEventListener("mouseout", () => {
+        setNodeId("");
+      });
+    });
+  }, [treeData]);
 
   return (
     <Wrapper>
       <div ref={svg} />
+      <div className="modal">
+        <Modal nodeId={nodeId}>
+          <div>name: {nodeId}</div>
+          <div>props:</div>
+          <div>state:</div>
+        </Modal>
+      </div>
     </Wrapper>
   );
 }

@@ -12,9 +12,9 @@ const path = require("path");
 const os = require("os");
 const waitOn = require("wait-on");
 
-let defaultPort = 3000;
-
 const checkPortNumber = () => {
+  let defaultPort = 3000;
+
   const stdout = execSync(
     "netstat -anv | grep LISTEN | awk '{print $4}'",
   ).toString();
@@ -39,12 +39,15 @@ const checkPortNumber = () => {
   return defaultPort;
 };
 
+const portNumber = checkPortNumber();
+
 const quitApplication = () => {
   try {
     execSync(
-      `lsof -i :${defaultPort} | grep LISTEN | awk '{print $2}' | xargs kill`,
+      `lsof -i :${portNumber} | grep LISTEN | awk '{print $2}' | xargs kill`,
     );
-    app.quit();
+
+    if (process.platform !== "darwin") app.quit();
   } catch (error) {
     console.error("Failed to kill server process:", error);
   }
@@ -128,13 +131,11 @@ ipcMain.handle("get-path", async () => {
     view.setBackgroundColor("#ffffff");
     view.webContents.loadFile(path.join(__dirname, "../views/loading.html"));
 
-    const portNumber = checkPortNumber();
-
     if (!canceled && filePaths.length > 0) {
       const projectPath = filePaths[0];
 
       exec(
-        `PORT=${portNumber} BROWSER=none npm run start`,
+        `PORT=${portNumber} BROWSER=none npm start`,
         {
           cwd: projectPath,
         },
@@ -151,6 +152,8 @@ ipcMain.handle("get-path", async () => {
         JSON.parse(data);
       `;
       const data = await view.webContents.executeJavaScript(JScodes, true);
+
+      BrowserWindow.getFocusedWindow().webContents.send("send-fiberData", data);
     }
 
     return null;
