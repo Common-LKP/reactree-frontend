@@ -1,6 +1,5 @@
 /* eslint-disable consistent-return */
 /* eslint-disable no-underscore-dangle */
-import React from "react";
 import ReactDOM from "react-dom/client";
 
 import App from "./App/App";
