@@ -1,38 +1,39 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import D3Tree from "../components/D3tree";
 import GlobalStyles from "../styles/GlobalStyles.styles";
+
+import { colors, size } from "../assets/constants";
 
 const EntryWrapper = styled.div`
   width: 100%;
   height: 100%;
-  padding: 20px;
-  background-color: #1e2124;
-  color: #7289da;
+  padding: ${size.padding};
+  background-color: ${colors.background};
+  color: ${colors.button};
 `;
 
 const Header = styled.header`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 16px;
+  margin: ${size.margin};
   font-size: 40px;
 `;
 
 const Nav = styled.nav`
-  margin-bottom: 10px;
+  margin-bottom: ${size.padding};
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-evenly;
 
   > div {
-    width: 48%;
     display: flex;
     flex-direction: column;
     align-items: center;
 
     > p {
-      margin-bottom: 8px;
+      padding-bottom: ${size.padding};
     }
   }
 `;
@@ -40,9 +41,9 @@ const Nav = styled.nav`
 const Button = styled.button`
   min-width: 250px;
   height: 30px;
-  color: #7289da;
-  background: #ffffff;
-  border: 2px solid #7289da;
+  color: ${colors.button};
+  background: ${colors.white};
+  border: 2px solid ${colors.button};
   border-radius: 10px;
   font-weight: 500;
   cursor: pointer;
@@ -52,8 +53,8 @@ const Button = styled.button`
   transition: 0.3s all ease;
 
   &:hover {
-    background: #7289da;
-    color: #ffffff;
+    background: ${colors.button};
+    color: ${colors.white};
   }
 `;
 
@@ -62,25 +63,64 @@ const Main = styled.main`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  background-color: ${colors.button};
+  height: 85%;
 
-  > div {
-    width: 48%;
-    height: calc(100vh - 200px);
-    border: 3px solid #424549;
+  .viewLayout {
+    background-color: aliceblue;
+    width: 100%;
+    color: white;
+    height: 100%;
+    border: 2px solid ${colors.border};
     border-radius: 10px;
+
+    .left {
+      margin-right: ${size.margin};
+    }
+
+    .right {
+      margin-left: ${size.margin};
+    }
+  }
+
+  .sideBar {
+    width: 100px;
+    background-color: antiquewhite;
+    border: 2px solid ${colors.border};
+    border-radius: 10px;
+    height: 80%;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
+    justify-content: space-around;
+
+    .rangeBar {
+      appearance: slider-vertical;
+    }
+
+    .title {
+      text-align: center;
+    }
   }
 `;
 
 function App() {
   const [hasPath, setHasPath] = useState(false);
   const [directoryPath, setDirectoryPath] = useState("");
-  window.electronAPI.sendFilePath((event, path) => {
-    setDirectoryPath(path);
-    return path ? setHasPath(true) : null;
-  });
+  const [width, setWidth] = useState(150);
+  const [height, setHeight] = useState(250);
+
+  useEffect(() => {
+    window.electronAPI.sendFilePath((event, path) => {
+      setDirectoryPath(path);
+      return path ? setHasPath(true) : null;
+    });
+  }, [directoryPath]);
+
+  const handleSize = event => {
+    if (event.target.name === "width") setWidth(event.target.value);
+    if (event.target.name === "height") setHeight(event.target.value);
+  };
 
   return (
     <EntryWrapper>
@@ -90,7 +130,7 @@ function App() {
       </Header>
       <Nav>
         <div>
-          <p>실행하고 싶은 프로젝트의 폴더를 선택해주세요.</p>
+          <p>프로젝트의 폴더를 선택해주세요.</p>
           <Button id="directoryButton">
             {hasPath ? directoryPath : "폴더 선택"}
           </Button>
@@ -108,9 +148,35 @@ function App() {
         </div>
       </Nav>
       <Main>
-        <div>렌더링 화면 구역</div>
-        <div>
-          <D3Tree />
+        <div className="viewLayout left">렌더링 화면 구역</div>
+        <div className="sideBar">
+          <div>
+            <div className="title">Width</div>
+            <input
+              type="range"
+              className="rangeBar"
+              min="100"
+              max="300"
+              name="width"
+              value={width}
+              onInput={handleSize}
+            />
+          </div>
+          <div>
+            <div className="title">Height</div>
+            <input
+              type="range"
+              className="rangeBar"
+              min="200"
+              max="500"
+              name="height"
+              value={height}
+              onInput={handleSize}
+            />
+          </div>
+        </div>
+        <div className="viewLayout right">
+          <D3Tree width={width} height={height} />
         </div>
       </Main>
     </EntryWrapper>

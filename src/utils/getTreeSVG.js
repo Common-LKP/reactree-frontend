@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { curveBumpX, hierarchy, tree, create, link } from "d3";
 
 export default function getTreeSVG(
@@ -5,28 +6,28 @@ export default function getTreeSVG(
   {
     children,
     label,
-    width = 800,
+    width = 600,
     height = 1000,
-    r = 10,
+    r = 5,
     padding = 1,
     fill = "#999",
-    stroke = "#555",
-    strokeWidth = 10,
-    strokeOpacity = 0.4,
+    stroke = "#300",
+    strokeWidth = 3,
+    strokeOpacity = 5,
     strokeLinejoin,
     strokeLinecap,
     halo = "#fff",
     haloWidth = 4,
+    dxWidth,
+    dyHeight,
     curve = curveBumpX,
   } = {},
 ) {
   const root = hierarchy(data, children);
-
   const descendants = root.descendants();
   const L = descendants.map(d => label(d.data, d));
-
-  const dx = 100;
-  const dy = width / (root.height + padding);
+  const dx = dxWidth;
+  const dy = dyHeight / (root.height + padding);
   tree().nodeSize([dx, dy])(root);
 
   const svg = create("svg")
@@ -35,7 +36,7 @@ export default function getTreeSVG(
     .attr("height", height)
     .attr("style", "max-width: 100%; height: auto; height: intrinsic;")
     .attr("font-family", "sans-serif")
-    .attr("font-size", 30);
+    .attr("font-size", 10);
 
   svg
     .append("g")

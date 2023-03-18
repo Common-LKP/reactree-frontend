@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-console */
 /* eslint-disable func-names */
 /* eslint-disable react-hooks/exhaustive-deps */
@@ -15,7 +16,7 @@ const Wrapper = styled.div`
   }
 `;
 
-export default function D3Tree() {
+export default function D3Tree({ width, height }) {
   const [treeData, setTreeData] = useState(mockTreeData);
   const fiberTree = new Node();
 
@@ -36,10 +37,11 @@ export default function D3Tree() {
 
   const svg = useRef();
   const [nodeId, setNodeId] = useState("");
-
   useEffect(() => {
     const chart = getTreeSVG(treeData, {
       label: d => d.name,
+      dxWidth: width,
+      dyHeight: height,
     });
 
     if (svg.current.firstChild) svg.current.removeChild(svg.current.firstChild);
@@ -60,7 +62,7 @@ export default function D3Tree() {
         setNodeId("");
       });
     });
-  }, [treeData]);
+  }, [treeData, width, height]);
 
   return (
     <Wrapper>
