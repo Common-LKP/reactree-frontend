@@ -12,6 +12,10 @@ const path = require("path");
 const os = require("os");
 const waitOn = require("wait-on");
 
+const fileInfo = {
+  filePath: null,
+};
+
 const checkPortNumber = () => {
   let defaultPort = 3000;
 
@@ -121,45 +125,12 @@ ipcMain.handle("get-path", async () => {
     });
 
     if (!canceled && filePaths.length > 0) {
-      const projectPath = filePaths[0];
-
-      const view = new BrowserView();
-
-      BrowserWindow.getFocusedWindow().setBrowserView(view);
-      view.setBounds({
-        x: 20,
-        y: 184,
-        width: 480,
-        height: 672,
-      });
-      view.setBackgroundColor("#ffffff");
-      view.webContents.loadFile(path.join(__dirname, "../views/loading.html"));
+      [fileInfo.filePath] = filePaths;
 
       BrowserWindow.getFocusedWindow().webContents.send(
         "send-file-path",
-        projectPath,
+        fileInfo.filePath,
       );
-
-      exec(
-        `PORT=${portNumber} BROWSER=none npm start`,
-        {
-          cwd: projectPath,
-        },
-        (error, stdout, stderr) => {
-          handleErrorMessage(stderr);
-        },
-      );
-
-      await waitOn({ resources: [`http://localhost:${portNumber}`] });
-      view.webContents.loadURL(`http://localhost:${portNumber}`);
-
-      const JScodes = `
-        const data = document.querySelector("#root").getAttribute("key");
-        JSON.parse(data);
-      `;
-      const data = await view.webContents.executeJavaScript(JScodes, true);
-
-      BrowserWindow.getFocusedWindow().webContents.send("send-fiberData", data);
     }
 
     return null;
@@ -168,6 +139,36 @@ ipcMain.handle("get-path", async () => {
   }
 });
 
-ipcMain.handle("commandInput", (event, result) => {
-  console.log(result);
+ipcMain.handle("commandInput", async (event, result) => {
+  const view = new BrowserView();
+  BrowserWindow.getFocusedWindow().setBrowserView(view);
+  view.setBounds({
+    x: 20,
+    y: 184,
+    width: 480,
+    height: 672,
+  });
+  view.setBackgroundColor("#ffffff");
+  view.webContents.loadFile(path.join(__dirname, "../views/loading.html"));
+
+  exec(
+    `PORT=${portNumber} BROWSER=none ${result}`,
+    {
+      cwd: fileInfo.filePath,
+    },
+    (error, stdout, stderr) => {
+      handleErrorMessage(stderr);
+    },
+  );
+
+  await waitOn({ resources: [`http://localhost:${portNumber}`] });
+  view.webContents.loadURL(`http://localhost:${portNumber}`);
+
+  const JScodes = `
+    const data = document.querySelector("#root").getAttribute("key");
+    JSON.parse(data);
+  `;
+  const data = await view.webContents.executeJavaScript(JScodes, true);
+
+  BrowserWindow.getFocusedWindow().webContents.send("send-fiberData", data);
 });

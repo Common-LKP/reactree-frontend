@@ -87,9 +87,13 @@ const Main = styled.main`
 
 function App() {
   const [hasPath, setHasPath] = useState(false);
+  const [directoryPath, setDirectoryPath] = useState("");
   window.electronAPI.sendFilePath((event, path) => {
+    setDirectoryPath(path);
     return path ? setHasPath(true) : null;
   });
+
+  console.log(directoryPath);
 
   return (
     <EntryWrapper>
@@ -101,7 +105,7 @@ function App() {
         <div>
           <p>실행하고 싶은 프로젝트의 폴더를 선택해주세요.</p>
           <DriectoryOpenButton id="directoryButton">
-            폴더 선택
+            {hasPath ? directoryPath : "폴더 선택"}
           </DriectoryOpenButton>
         </div>
         <div>
