@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { useState } from "react";
 import D3Tree from "../components/D3tree";
 import GlobalStyles from "../styles/GlobalStyles.styles";
 
@@ -85,6 +86,11 @@ const Main = styled.main`
 `;
 
 function App() {
+  const [hasPath, setHasPath] = useState(false);
+  window.electronAPI.sendFilePath((event, path) => {
+    return path ? setHasPath(true) : null;
+  });
+
   return (
     <EntryWrapper>
       <GlobalStyles />
@@ -100,7 +106,12 @@ function App() {
         </div>
         <div>
           <p>npm 실행 명령어를 입력해주세요.</p>
-          <InputCommand type="text" placeholder="ex) npm run start" />
+          <InputCommand
+            id="commandInput"
+            type="text"
+            placeholder="ex) npm run start"
+            disabled={!hasPath}
+          />
         </div>
       </Nav>
       <Main>

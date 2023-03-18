@@ -119,20 +119,26 @@ ipcMain.handle("get-path", async () => {
     const { canceled, filePaths } = await dialog.showOpenDialog({
       properties: ["openDirectory"],
     });
-    const view = new BrowserView();
-
-    BrowserWindow.getFocusedWindow().setBrowserView(view);
-    view.setBounds({
-      x: 20,
-      y: 184,
-      width: 480,
-      height: 672,
-    });
-    view.setBackgroundColor("#ffffff");
-    view.webContents.loadFile(path.join(__dirname, "../views/loading.html"));
 
     if (!canceled && filePaths.length > 0) {
       const projectPath = filePaths[0];
+
+      const view = new BrowserView();
+
+      BrowserWindow.getFocusedWindow().setBrowserView(view);
+      view.setBounds({
+        x: 20,
+        y: 184,
+        width: 480,
+        height: 672,
+      });
+      view.setBackgroundColor("#ffffff");
+      view.webContents.loadFile(path.join(__dirname, "../views/loading.html"));
+
+      BrowserWindow.getFocusedWindow().webContents.send(
+        "send-file-path",
+        projectPath,
+      );
 
       exec(
         `PORT=${portNumber} BROWSER=none npm start`,
@@ -160,4 +166,8 @@ ipcMain.handle("get-path", async () => {
   } catch (error) {
     return console.error(error);
   }
+});
+
+ipcMain.handle("commandInput", (event, result) => {
+  console.log(result);
 });

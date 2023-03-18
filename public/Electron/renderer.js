@@ -23,3 +23,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 });
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const inputElement = await getElementByIdAsync("commandInput");
+  inputElement.addEventListener("keydown", async event => {
+    try {
+      if (event.key === "Enter") {
+        const inputValue = event.target.value;
+        await window.electronAPI.commandData(inputValue);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  });
+});
