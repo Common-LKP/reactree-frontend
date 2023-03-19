@@ -1,16 +1,16 @@
-const colors = {
-  background: "#1e2124",
-  white: "#ffffff",
-  border: "#424549",
-  button: "#7289da",
-  view_background: "#36393e",
+const COLORS = {
+  BACKGROUND: "#1e2124",
+  WHITE: "#ffffff",
+  BORDER: "#424549",
+  BUTTON: "#7289da",
+  VIEW_BACKGROUND: "#36393e",
 };
 
-const size = {
-  margin: "12px",
-  padding: "8px",
-  marginCenter: "25px",
+const SIZE = {
+  MARGIN: "12px",
+  PADDING: "8px",
+  MARGIN_CENTER: "25px",
 };
 
-exports.colors = colors;
-exports.size = size;
+exports.COLORS = COLORS;
+exports.SIZE = SIZE;

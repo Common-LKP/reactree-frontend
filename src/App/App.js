@@ -3,21 +3,21 @@ import styled from "styled-components";
 
 import D3Tree from "../components/D3tree";
 import GlobalStyles from "../styles/GlobalStyles.styles";
-import { colors, size } from "../assets/constants";
+import { COLORS, SIZE } from "../assets/constants";
 
 const EntryWrapper = styled.div`
   width: 100%;
   height: 100%;
-  padding: ${size.padding};
-  background-color: ${colors.background};
-  color: ${colors.button};
+  padding: ${SIZE.PADDING};
+  background-color: ${COLORS.BACKGROUND};
+  color: ${COLORS.BUTTON};
 `;
 
 const Header = styled.header`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: ${size.margin};
+  margin: ${SIZE.MARGIN};
   font-size: 40px;
 `;
 
@@ -25,7 +25,7 @@ const Nav = styled.nav`
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  margin-bottom: ${size.padding};
+  margin-bottom: ${SIZE.PADDING};
 
   > div {
     display: flex;
@@ -33,7 +33,7 @@ const Nav = styled.nav`
     align-items: center;
 
     > p {
-      padding-bottom: ${size.padding};
+      padding-bottom: ${SIZE.PADDING};
     }
   }
 `;
@@ -44,17 +44,17 @@ const Button = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: ${colors.white};
-  color: ${colors.button};
-  border: 2px solid ${colors.button};
+  background-color: ${COLORS.WHITE};
+  color: ${COLORS.BUTTON};
+  border: 2px solid ${COLORS.BUTTON};
   border-radius: 10px;
   font-weight: 500;
   transition: 0.3s all ease;
   cursor: pointer;
 
   &:hover {
-    background-color: ${colors.button};
-    color: ${colors.white};
+    background-color: ${COLORS.BUTTON};
+    color: ${COLORS.WHITE};
   }
 `;
 
@@ -64,22 +64,22 @@ const Main = styled.main`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  background-color: ${colors.background};
+  background-color: ${COLORS.BACKGROUND};
 
   .viewLayout {
     width: 100%;
     height: 100%;
-    background-color: ${colors.view_background};
+    background-color: ${COLORS.VIEW_BACKGROUND};
     color: white;
-    border: 2px solid ${colors.border};
+    border: 2px solid ${COLORS.BORDER};
     border-radius: 10px;
 
     .left {
-      margin-right: ${size.margin};
+      margin-right: ${SIZE.MARGIN};
     }
 
     .right {
-      margin-left: ${size.margin};
+      margin-left: ${SIZE.MARGIN};
     }
   }
 
@@ -91,7 +91,7 @@ const Main = styled.main`
     justify-content: space-around;
     align-items: center;
     background-color: antiquewhite;
-    border: 2px solid ${colors.border};
+    border: 2px solid ${COLORS.BORDER};
     border-radius: 10px;
 
     .rangeBar {
@@ -202,6 +202,7 @@ function App() {
             pathWidth={pathWidth}
             pathHeight={pathHeight}
             layout={layout}
+            setPathHeight={setPathHeight}
           />
         </div>
       </Main>

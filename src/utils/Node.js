@@ -1,5 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable func-names */
+/* eslint-disable no-underscore-dangle */
 import { v4 as uuidv4 } from "uuid";
 
 function Node() {
@@ -30,6 +31,8 @@ Node.prototype.setName = function (node) {
     this.name = node.memoizedProps;
   } else if (node.tag === 8) {
     this.name = "React.StrictMode";
+  } else if (node.tag === 10) {
+    this.name = node.elementType._context.displayName;
   } else if (node.tag === 11) {
     this.name = node.elementType.target;
   } else if (node.tag === 15) {
