@@ -2,28 +2,33 @@
   "name": "CompFirst",
   "props": ["props1", "props2"],
   "state": ["state1, state2"],
+  "uuid": "asd13rwef23rsdf",
   "children": [
     {
       "name": "CompSecret",
-      "props": [],
-      "state": [],
+      "props": ["secret"],
+      "state": ["state1"],
+      "uuid": "f23jkthsndgjkssd",
       "children": []
     },
     {
       "name": "CompSecond",
-      "props": [],
-      "state": [],
+      "props": ["second"],
+      "state": ["secondState"],
+      "uuid": "sfjkhwjekbgnmsd",
       "children": [
         {
           "name": "CompThird",
-          "props": [],
-          "state": [],
+          "props": ["Third"],
+          "state": ["thirdState"],
+          "uuid": "dfjknbwkjenmqsnslf",
           "children": []
         },
         {
           "name": "CompThird",
-          "props": [],
-          "state": [],
+          "props": ["Thirdasdasd2"],
+          "state": ["thirdState2", "thirdState5"],
+          "uuid": "kjdshfjknweiuskdnjm",
           "children": []
         }
       ]

@@ -59,7 +59,6 @@ const quitApplication = () => {
 const handleErrorMessage = error => {
   const lines = error.split(os.EOL);
   let detail;
-  console.log(lines[0]);
 
   if (lines[lines.length - 1] === "") {
     lines.pop();
@@ -154,9 +153,7 @@ ipcMain.handle("npmStartButton", async (event, result) => {
 
   exec(
     `PORT=${portNumber} BROWSER=none npm start`,
-    {
-      cwd: fileInfo.filePath,
-    },
+    { cwd: fileInfo.filePath },
     (error, stdout, stderr) => {
       handleErrorMessage(stderr);
     },
@@ -172,4 +169,10 @@ ipcMain.handle("npmStartButton", async (event, result) => {
   const data = await view.webContents.executeJavaScript(JScodes, true);
 
   BrowserWindow.getFocusedWindow().webContents.send("send-fiberData", data);
+});
+
+// NOTE: uuid 확인용 콘솔
+ipcMain.on("send-node-data", (event, data) => {
+  console.log(data);
+  BrowserWindow.getFocusedWindow().webContents.send("get-node-data", data);
 });

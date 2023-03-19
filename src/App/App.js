@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import D3Tree from "../components/D3tree";
 import GlobalStyles from "../styles/GlobalStyles.styles";
 
@@ -77,9 +77,13 @@ const Main = styled.main`
 function App() {
   const [hasPath, setHasPath] = useState(false);
   const [directoryPath, setDirectoryPath] = useState("");
-  window.electronAPI.sendFilePath((event, path) => {
-    setDirectoryPath(path);
-    return path ? setHasPath(true) : null;
+
+  useEffect(() => {
+    window.electronAPI.sendFilePath((event, path) => {
+      setDirectoryPath(path);
+
+      return path ? setHasPath(true) : null;
+    });
   });
 
   return (

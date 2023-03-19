@@ -64,7 +64,7 @@ export default function getTreeSVG(
 
   node
     .append("circle")
-    .attr("id", d => d.data.name)
+    .attr("id", d => d.data.uuid)
     .attr("fill", d => (d.children ? stroke : fill))
     .attr("r", r);
 
