@@ -1,8 +1,8 @@
-/* eslint-disable import/no-named-as-default */
-/* eslint-disable func-names */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
+import { hierarchy } from "d3";
+
 import Modal from "./Modal";
 import getTreeSVG from "../utils/getTreeSVG";
 import createNode from "../utils/reactFiberTree";
@@ -18,29 +18,30 @@ const Wrapper = styled.div`
 `;
 
 export default function D3Tree() {
-  const [treeData, setTreeData] = useState(mockTreeData);
+  const [hierarchyData, setHierarchyData] = useState(hierarchy(mockTreeData));
   const fiberTree = new Node();
 
   const getTreeData = async function () {
     try {
-      window.electronAPI.fiberData((event, value) => {
+      await window.electronAPI.fiberData((event, value) => {
         createNode(value, fiberTree);
-        setTreeData(fiberTree);
+        setHierarchyData(hierarchy(fiberTree));
       });
     } catch (error) {
       console.error(error);
     }
   };
 
-  useEffect(() => {
-    getTreeData();
-  }, []);
-
   const svg = useRef();
   const [nodeId, setNodeId] = useState("");
+  const [nodeName, setNodeName] = useState("");
+  const [nodeProps, setNodeProps] = useState(null);
+  const [nodeState, setNodeState] = useState(null);
 
   useEffect(() => {
-    const chart = getTreeSVG(treeData, {
+    getTreeData();
+
+    const chart = getTreeSVG(hierarchyData.data, {
       label: d => d.name,
     });
 
@@ -52,26 +53,38 @@ export default function D3Tree() {
 
     componentNodes.forEach(node => {
       node.addEventListener("mouseover", event => {
-        setNodeId(event.target.id);
+        const nodeData = hierarchyData.find(
+          d => d.data.uuid === event.target.id,
+        );
+
+        if (nodeData) {
+          setNodeId(nodeData.data.uuid);
+          setNodeName(nodeData.data.name);
+          setNodeProps(nodeData.data.props.join(", "));
+          setNodeState(nodeData.data.state.join(", "));
+        }
       });
       node.addEventListener("mousemove", event => {
         modal.style.left = `${event.clientX + 10}px`;
         modal.style.top = `${event.clientY - modal.clientHeight - 10}px`;
       });
       node.addEventListener("mouseout", () => {
-        setNodeId("");
+        setNodeId(null);
+        setNodeName(null);
+        setNodeProps(null);
+        setNodeState(null);
       });
     });
-  }, [treeData]);
+  }, [hierarchyData]);
 
   return (
     <Wrapper>
       <div ref={svg} />
       <div className="modal">
         <Modal nodeId={nodeId}>
-          <div>name: {nodeId}</div>
-          <div>props:</div>
-          <div>state:</div>
+          <div>name: {nodeName}</div>
+          <div>props: {nodeProps}</div>
+          <div>state: {nodeState}</div>
         </Modal>
       </div>
     </Wrapper>

@@ -1,9 +1,13 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable func-names */
 /* eslint-disable no-underscore-dangle */
+import { v4 as uuidv4 } from "uuid";
+
 function Node() {
   this.name = "";
   this.props = [];
   this.state = [];
+  this.uuid = uuidv4();
   this.children = [];
 }
 
