@@ -3,6 +3,7 @@ const colors = {
   white: "#ffffff",
   border: "#424549",
   button: "#7289da",
+  view_background: "#36393e",
 };
 
 const size = {

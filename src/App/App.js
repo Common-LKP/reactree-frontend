@@ -1,8 +1,8 @@
+import { useEffect, useState, useRef, useLayoutEffect } from "react";
 import styled from "styled-components";
-import { useEffect, useState } from "react";
+
 import D3Tree from "../components/D3tree";
 import GlobalStyles from "../styles/GlobalStyles.styles";
-
 import { colors, size } from "../assets/constants";
 
 const EntryWrapper = styled.div`
@@ -22,10 +22,10 @@ const Header = styled.header`
 `;
 
 const Nav = styled.nav`
-  margin-bottom: ${size.padding};
   display: flex;
   align-items: center;
   justify-content: space-evenly;
+  margin-bottom: ${size.padding};
 
   > div {
     display: flex;
@@ -41,36 +41,36 @@ const Nav = styled.nav`
 const Button = styled.button`
   min-width: 250px;
   height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${colors.white};
   color: ${colors.button};
-  background: ${colors.white};
   border: 2px solid ${colors.button};
   border-radius: 10px;
   font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   transition: 0.3s all ease;
+  cursor: pointer;
 
   &:hover {
-    background: ${colors.button};
+    background-color: ${colors.button};
     color: ${colors.white};
   }
 `;
 
 const Main = styled.main`
+  height: 85%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  background-color: ${colors.button};
-  height: 85%;
+  background-color: ${colors.background};
 
   .viewLayout {
-    background-color: aliceblue;
     width: 100%;
-    color: white;
     height: 100%;
+    background-color: ${colors.view_background};
+    color: white;
     border: 2px solid ${colors.border};
     border-radius: 10px;
 
@@ -85,14 +85,14 @@ const Main = styled.main`
 
   .sideBar {
     width: 100px;
-    background-color: antiquewhite;
-    border: 2px solid ${colors.border};
-    border-radius: 10px;
     height: 80%;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: space-around;
+    align-items: center;
+    background-color: antiquewhite;
+    border: 2px solid ${colors.border};
+    border-radius: 10px;
 
     .rangeBar {
       appearance: slider-vertical;
@@ -107,8 +107,10 @@ const Main = styled.main`
 function App() {
   const [hasPath, setHasPath] = useState(false);
   const [directoryPath, setDirectoryPath] = useState("");
-  const [width, setWidth] = useState(150);
-  const [height, setHeight] = useState(250);
+  const [pathWidth, setPathWidth] = useState(150);
+  const [pathHeight, setPathHeight] = useState(250);
+  const [layout, setLayout] = useState({ width: 400, height: 850 });
+  const ref = useRef(null);
 
   useEffect(() => {
     window.electronAPI.sendFilePath((event, path) => {
@@ -117,9 +119,29 @@ function App() {
     });
   }, [directoryPath]);
 
+  useLayoutEffect(() => {
+    setLayout({
+      width: ref.current.clientWidth,
+      height: ref.current.clientHeight,
+    });
+  }, []);
+
+  useEffect(() => {
+    const handleWindow = () => {
+      setLayout({
+        width: ref.current.clientWidth,
+        height: ref.current.clientHeight,
+      });
+    };
+
+    window.addEventListener("resize", handleWindow);
+
+    return () => window.addEventListener("resize", handleWindow);
+  }, []);
+
   const handleSize = event => {
-    if (event.target.name === "width") setWidth(event.target.value);
-    if (event.target.name === "height") setHeight(event.target.value);
+    if (event.target.name === "width") setPathWidth(event.target.value);
+    if (event.target.name === "height") setPathHeight(event.target.value);
   };
 
   return (
@@ -155,10 +177,10 @@ function App() {
             <input
               type="range"
               className="rangeBar"
-              min="100"
+              min="0"
               max="300"
               name="width"
-              value={width}
+              value={pathWidth}
               onInput={handleSize}
             />
           </div>
@@ -167,16 +189,20 @@ function App() {
             <input
               type="range"
               className="rangeBar"
-              min="200"
+              min="0"
               max="500"
               name="height"
-              value={height}
+              value={pathHeight}
               onInput={handleSize}
             />
           </div>
         </div>
-        <div className="viewLayout right">
-          <D3Tree width={width} height={height} />
+        <div id="treeSection" className="viewLayout right" ref={ref}>
+          <D3Tree
+            pathWidth={pathWidth}
+            pathHeight={pathHeight}
+            layout={layout}
+          />
         </div>
       </Main>
     </EntryWrapper>

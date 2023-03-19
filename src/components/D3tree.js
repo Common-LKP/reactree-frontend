@@ -4,6 +4,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
+
 import Modal from "./Modal";
 import getTreeSVG from "../utils/getTreeSVG";
 import createNode from "../utils/reactFiberTree";
@@ -11,12 +12,18 @@ import Node from "../utils/Node";
 import mockTreeData from "../assets/mockTreeData.json";
 
 const Wrapper = styled.div`
+  height: 100%;
+
+  .svg {
+    height: 100%;
+  }
+
   .modal {
     position: absolute;
   }
 `;
 
-export default function D3Tree({ width, height }) {
+export default function D3Tree({ pathWidth, pathHeight, layout }) {
   const [treeData, setTreeData] = useState(mockTreeData);
   const fiberTree = new Node();
 
@@ -40,8 +47,10 @@ export default function D3Tree({ width, height }) {
   useEffect(() => {
     const chart = getTreeSVG(treeData, {
       label: d => d.name,
-      dxWidth: width,
-      dyHeight: height,
+      width: layout.width,
+      height: layout.height,
+      dxWidth: pathWidth,
+      dyHeight: pathHeight,
     });
 
     if (svg.current.firstChild) svg.current.removeChild(svg.current.firstChild);
@@ -62,11 +71,11 @@ export default function D3Tree({ width, height }) {
         setNodeId("");
       });
     });
-  }, [treeData, width, height]);
+  }, [treeData, pathWidth, pathHeight, layout]);
 
   return (
     <Wrapper>
-      <div ref={svg} />
+      <div ref={svg} className="svg" />
       <div className="modal">
         <Modal nodeId={nodeId}>
           <div>name: {nodeId}</div>
