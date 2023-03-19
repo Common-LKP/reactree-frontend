@@ -1,5 +1,5 @@
-/* eslint-disable no-param-reassign */
-import { curveBumpX, hierarchy, tree, create, link } from "d3";
+/* eslint-disable no-use-before-define */
+import { curveBumpX, hierarchy, tree, create, link, zoom } from "d3";
 
 export default function getTreeSVG(
   data,
@@ -8,8 +8,8 @@ export default function getTreeSVG(
     label,
     width,
     height,
-    r = 5,
-    padding = 1,
+    r = 10,
+    padding = 0.01,
     fill = "#999",
     stroke = "#300",
     strokeWidth = 3,
@@ -26,17 +26,42 @@ export default function getTreeSVG(
   const root = hierarchy(data, children);
   const descendants = root.descendants();
   const L = descendants.map(d => label(d.data, d));
-  const dx = dxWidth;
-  const dy = dyHeight / (root.height + padding);
+  const dx = dxWidth || width / (root.height + padding);
+  const dy = dyHeight || 50;
   tree().nodeSize([dx, dy])(root);
 
+  const viewBox = [-width / 2, -dy, width, height];
+  const minZoom = 0.5;
+  const maxZoom = 2;
+  const labelY = 1.5;
+  const labelFontSize = 10;
+
   const svg = create("svg")
-    .attr("viewBox", [-400, -100, width, height])
+    .attr("viewBox", viewBox)
     .attr("width", width)
     .attr("height", height)
     .attr("style", "max-width: 100%; height: auto; height: intrinsic;")
     .attr("font-family", "sans-serif")
-    .attr("font-size", 10);
+    .attr("font-size", labelFontSize)
+    .call(
+      zoom()
+        .extent([
+          [0, 0],
+          [width, height],
+        ])
+        .scaleExtent([minZoom, maxZoom])
+        .on("zoom", function (event) {
+          const { x, y, k } = event.transform;
+          const [vx, vy, vw, vh] = viewBox;
+          svg.attr("viewBox", [vx + x, vy + y, vw * k, vh * k]);
+          node.attr("transform", d => `translate(${d.x},${d.y}) scale(${k})`);
+          node.select("circle").attr("r", r / k);
+          node
+            .select("text")
+            .attr("dy", `${labelY / k + labelY / r}em`)
+            .attr("font-size", labelFontSize / k);
+        }),
+    );
 
   svg
     .append("g")
@@ -72,7 +97,7 @@ export default function getTreeSVG(
   if (L)
     node
       .append("text")
-      .attr("dy", "1.5em")
+      .attr("dy", `${labelY}em`)
       .attr("text-anchor", "middle")
       .attr("paint-order", "stroke")
       .attr("stroke", halo)

@@ -1,5 +1,5 @@
-/* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types */
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { hierarchy } from "d3";
@@ -13,6 +13,7 @@ import { colors } from "../assets/constants";
 
 const Wrapper = styled.div`
   height: 100%;
+  overflow: hidden;
 
   .svg {
     height: 100%;
@@ -24,7 +25,12 @@ const Wrapper = styled.div`
   }
 `;
 
-export default function D3Tree({ pathWidth, pathHeight, layout }) {
+export default function D3Tree({
+  pathWidth,
+  pathHeight,
+  layout,
+  setPathHeight,
+}) {
   const [hierarchyData, setHierarchyData] = useState(hierarchy(mockTreeData));
   const fiberTree = new Node();
 
@@ -54,6 +60,7 @@ export default function D3Tree({ pathWidth, pathHeight, layout }) {
       height: layout.height,
       dxWidth: pathWidth,
       dyHeight: pathHeight,
+      setDyHeigth: setPathHeight,
     });
 
     if (svg.current.firstChild) svg.current.removeChild(svg.current.firstChild);

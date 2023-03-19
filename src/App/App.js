@@ -202,6 +202,7 @@ function App() {
             pathWidth={pathWidth}
             pathHeight={pathHeight}
             layout={layout}
+            setPathHeight={setPathHeight}
           />
         </div>
       </Main>
