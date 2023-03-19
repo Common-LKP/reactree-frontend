@@ -10,6 +10,8 @@ import Node from "../utils/Node";
 import mockTreeData from "../assets/mockTreeData.json";
 
 const Wrapper = styled.div`
+  overflow: hidden;
+
   .modal {
     position: absolute;
   }

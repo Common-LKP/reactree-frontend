@@ -1,4 +1,5 @@
-import { curveBumpX, hierarchy, tree, create, link } from "d3";
+/* eslint-disable no-use-before-define */
+import { curveBumpX, hierarchy, tree, create, link, zoom } from "d3";
 
 export default function getTreeSVG(
   data,
@@ -6,9 +7,9 @@ export default function getTreeSVG(
     children,
     label,
     width = 800,
-    height = 1000,
-    r = 10,
-    padding = 1,
+    height = 800,
+    r = 20,
+    padding = 0.01,
     fill = "#999",
     stroke = "#555",
     strokeWidth = 10,
@@ -25,17 +26,45 @@ export default function getTreeSVG(
   const descendants = root.descendants();
   const L = descendants.map(d => label(d.data, d));
 
-  const dx = 100;
-  const dy = width / (root.height + padding);
+  const dx = width / (root.height + padding);
+  const dy = 50;
   tree().nodeSize([dx, dy])(root);
 
+  const viewBox = [-width / 2, -dy, width, height];
+  const minZoom = 0.5;
+  const maxZoom = 2;
+  const labelY = 1.5;
+  const labelFontSize = 30;
+
   const svg = create("svg")
-    .attr("viewBox", [-400, -100, width, height])
+    .attr("viewBox", viewBox)
     .attr("width", width)
     .attr("height", height)
-    .attr("style", "max-width: 100%; height: auto; height: intrinsic;")
+    .attr(
+      "style",
+      "max-width: 100%; height: auto; height: intrinsic; background-color: gray;",
+    )
     .attr("font-family", "sans-serif")
-    .attr("font-size", 30);
+    .attr("font-size", 30)
+    .call(
+      zoom()
+        .extent([
+          [0, 0],
+          [width, height],
+        ])
+        .scaleExtent([minZoom, maxZoom])
+        .on("zoom", function (event) {
+          const { x, y, k } = event.transform;
+          const [vx, vy, vw, vh] = viewBox;
+          svg.attr("viewBox", [vx + x, vy + y, vw * k, vh * k]);
+          node.attr("transform", d => `translate(${d.x},${d.y}) scale(${k})`);
+          node.select("circle").attr("r", r / k);
+          node
+            .select("text")
+            .attr("dy", `${labelY / k + labelY / r}em`)
+            .attr("font-size", labelFontSize / k);
+        }),
+    );
 
   svg
     .append("g")
@@ -71,7 +100,7 @@ export default function getTreeSVG(
   if (L)
     node
       .append("text")
-      .attr("dy", "1.5em")
+      .attr("dy", `${labelY}em`)
       .attr("text-anchor", "middle")
       .attr("paint-order", "stroke")
       .attr("stroke", halo)

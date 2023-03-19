@@ -113,9 +113,7 @@ function App() {
       </Nav>
       <Main>
         <div>렌더링 화면 구역</div>
-        <div>
-          <D3Tree />
-        </div>
+        <D3Tree />
       </Main>
     </EntryWrapper>
   );
