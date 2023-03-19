@@ -15,15 +15,15 @@ const Wrapper = styled.div`
 
 export default function D3Tree() {
   const [treeData, setTreeData] = useState(mockTreeData);
-  const [data, setData] = useState(hierarchy(mockTreeData));
+  const [hierarchyData, hierarchySetData] = useState(hierarchy(mockTreeData));
   const fiberTree = new Node();
 
   const getTreeData = async function () {
     try {
-      window.electronAPI.fiberData((event, value) => {
+      await window.electronAPI.fiberData((event, value) => {
         createNode(value, fiberTree);
         setTreeData(fiberTree);
-        setData(hierarchy(fiberTree));
+        hierarchySetData(hierarchy(fiberTree));
       });
     } catch (error) {
       console.error(error);
@@ -52,9 +52,9 @@ export default function D3Tree() {
 
     componentNodes.forEach(node => {
       node.addEventListener("mouseover", event => {
-        const nodeData = data
-          .descendants()
-          .find(d => d.data.name === event.target.id);
+        const nodeData = hierarchyData.find(
+          d => d.data.uuid === event.target.id,
+        );
         if (nodeData) {
           setNodeId(nodeData.data.name);
           setNodeProps(nodeData.data.props);
@@ -66,12 +66,12 @@ export default function D3Tree() {
         modal.style.top = `${event.clientY - modal.clientHeight - 10}px`;
       });
       node.addEventListener("mouseout", () => {
-        setNodeId("");
+        setNodeId(null);
         setNodeProps(null);
         setNodeState(null);
       });
     });
-  }, [treeData, data]);
+  }, [treeData, hierarchyData]);
 
   return (
     <Wrapper>

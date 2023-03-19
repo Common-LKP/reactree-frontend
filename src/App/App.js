@@ -83,7 +83,7 @@ function App() {
       setDirectoryPath(path);
       return path ? setHasPath(true) : null;
     });
-  }, [hasPath]);
+  });
 
   return (
     <EntryWrapper>
