@@ -81,6 +81,7 @@ function App() {
   useEffect(() => {
     window.electronAPI.sendFilePath((event, path) => {
       setDirectoryPath(path);
+
       return path ? setHasPath(true) : null;
     });
   });

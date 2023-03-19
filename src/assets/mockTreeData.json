@@ -27,7 +27,7 @@
         {
           "name": "CompThird",
           "props": ["Thirdasdasd2"],
-          "state": ["thirdState2"],
+          "state": ["thirdState2", "thirdState5"],
           "uuid": "kjdshfjknweiuskdnjm",
           "children": []
         }

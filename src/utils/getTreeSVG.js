@@ -7,7 +7,7 @@ export default function getTreeSVG(
     label,
     width = 800,
     height = 1000,
-    r = 40,
+    r = 10,
     padding = 1,
     fill = "#999",
     stroke = "#555",
