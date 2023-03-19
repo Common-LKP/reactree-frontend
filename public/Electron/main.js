@@ -94,8 +94,6 @@ const createWindow = () => {
     resizable: true,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
-      nodeIntegration: false,
-      contextIsolation: true,
     },
   });
 
