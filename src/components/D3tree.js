@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* eslint-disable import/no-named-as-default */
 /* eslint-disable func-names */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from "react";
@@ -10,6 +10,8 @@ import Node from "../utils/Node";
 import mockTreeData from "../assets/mockTreeData.json";
 
 const Wrapper = styled.div`
+  overflow: hidden;
+
   .modal {
     position: absolute;
   }
