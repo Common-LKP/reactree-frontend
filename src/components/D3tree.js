@@ -50,9 +50,9 @@ export default function D3Tree() {
 
     componentNodes.forEach(node => {
       node.addEventListener("mouseover", event => {
-        const nodeData = hierarchyData
-          .descendants()
-          .find(d => d.data.uuid === event.target.id);
+        const nodeData = hierarchyData.find(
+          d => d.data.uuid === event.target.id,
+        );
         if (nodeData) {
           setNodeId(nodeData.data.name);
           setNodeProps(nodeData.data.props.join(", "));
