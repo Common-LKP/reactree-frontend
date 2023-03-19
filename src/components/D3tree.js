@@ -14,7 +14,6 @@ const Wrapper = styled.div`
 `;
 
 export default function D3Tree() {
-  const [treeData, setTreeData] = useState(mockTreeData);
   const [hierarchyData, hierarchySetData] = useState(hierarchy(mockTreeData));
   const fiberTree = new Node();
 
@@ -22,7 +21,6 @@ export default function D3Tree() {
     try {
       await window.electronAPI.fiberData((event, value) => {
         createNode(value, fiberTree);
-        setTreeData(fiberTree);
         hierarchySetData(hierarchy(fiberTree));
       });
     } catch (error) {
@@ -40,7 +38,7 @@ export default function D3Tree() {
   const [nodeState, setNodeState] = useState(null);
 
   useEffect(() => {
-    const chart = getTreeSVG(treeData, {
+    const chart = getTreeSVG(hierarchyData.data, {
       label: d => d.name,
     });
 
@@ -52,13 +50,13 @@ export default function D3Tree() {
 
     componentNodes.forEach(node => {
       node.addEventListener("mouseover", event => {
-        const nodeData = hierarchyData.find(
-          d => d.data.uuid === event.target.id,
-        );
+        const nodeData = hierarchyData
+          .descendants()
+          .find(d => d.data.uuid === event.target.id);
         if (nodeData) {
           setNodeId(nodeData.data.name);
-          setNodeProps(nodeData.data.props);
-          setNodeState(nodeData.data.state);
+          setNodeProps(nodeData.data.props.join(", "));
+          setNodeState(nodeData.data.state.join(", "));
         }
       });
       node.addEventListener("mousemove", event => {
@@ -71,7 +69,7 @@ export default function D3Tree() {
         setNodeState(null);
       });
     });
-  }, [treeData, hierarchyData]);
+  }, [hierarchyData]);
 
   return (
     <Wrapper>
@@ -79,8 +77,8 @@ export default function D3Tree() {
       <div className="modal">
         <Modal nodeId={nodeId}>
           <div>name: {nodeId}</div>
-          <div>props: {JSON.stringify(nodeProps)}</div>
-          <div>state: {JSON.stringify(nodeState)}</div>
+          <div>props: {nodeProps}</div>
+          <div>state: {nodeState}</div>
         </Modal>
       </div>
     </Wrapper>
