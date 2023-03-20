@@ -90,11 +90,9 @@ const createWindow = () => {
   const win = new BrowserWindow({
     width: 1040,
     height: 900,
-    resizable: false,
+    resizable: true,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
-      nodeIntegration: false,
-      contextIsolation: true,
     },
   });
 
@@ -173,6 +171,6 @@ ipcMain.handle("npmStartButton", async (event, result) => {
 
 // NOTE: uuid 확인용 콘솔
 ipcMain.on("send-node-data", (event, data) => {
-  console.log(data);
+  // console.log(data);
   BrowserWindow.getFocusedWindow().webContents.send("get-node-data", data);
 });

@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types */
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { hierarchy } from "d3";
@@ -8,16 +9,28 @@ import getTreeSVG from "../utils/getTreeSVG";
 import createNode from "../utils/reactFiberTree";
 import Node from "../utils/Node";
 import mockTreeData from "../assets/mockTreeData.json";
+import { COLORS } from "../assets/constants";
 
 const Wrapper = styled.div`
+  height: 100%;
   overflow: hidden;
 
+  .svg {
+    height: 100%;
+  }
+
   .modal {
+    color: ${COLORS.BUTTON};
     position: absolute;
   }
 `;
 
-export default function D3Tree() {
+export default function D3Tree({
+  pathWidth,
+  pathHeight,
+  layout,
+  setPathHeight,
+}) {
   const [hierarchyData, setHierarchyData] = useState(hierarchy(mockTreeData));
   const fiberTree = new Node();
 
@@ -43,6 +56,11 @@ export default function D3Tree() {
 
     const chart = getTreeSVG(hierarchyData.data, {
       label: d => d.name,
+      width: layout.width,
+      height: layout.height,
+      dxWidth: pathWidth,
+      dyHeight: pathHeight,
+      setDyHeigth: setPathHeight,
     });
 
     if (svg.current.firstChild) svg.current.removeChild(svg.current.firstChild);
@@ -75,11 +93,11 @@ export default function D3Tree() {
         setNodeState(null);
       });
     });
-  }, [hierarchyData]);
+  }, [hierarchyData, pathWidth, pathHeight, layout]);
 
   return (
     <Wrapper>
-      <div ref={svg} />
+      <div ref={svg} className="svg" />
       <div className="modal">
         <Modal nodeId={nodeId}>
           <div>name: {nodeName}</div>
