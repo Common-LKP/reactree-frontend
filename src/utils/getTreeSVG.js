@@ -6,44 +6,41 @@ export default function getTreeSVG(
   {
     children,
     label,
-    width = 800,
-    height = 800,
-    r = 20,
+    width,
+    height,
+    r = 10,
     padding = 0.01,
     fill = "#999",
-    stroke = "#555",
-    strokeWidth = 10,
-    strokeOpacity = 0.4,
+    stroke = "#300",
+    strokeWidth = 3,
+    strokeOpacity = 5,
     strokeLinejoin,
     strokeLinecap,
     halo = "#fff",
     haloWidth = 4,
+    dxWidth,
+    dyHeight,
     curve = curveBumpX,
   } = {},
 ) {
   const root = hierarchy(data, children);
-
   const descendants = root.descendants();
   const L = descendants.map(d => label(d.data, d));
-
-  const dx = width / (root.height + padding);
-  const dy = 50;
+  const dx = dxWidth || width / (root.height + padding);
+  const dy = dyHeight || 50;
   tree().nodeSize([dx, dy])(root);
 
   const viewBox = [-width / 2, -dy, width, height];
   const minZoom = 0.5;
   const maxZoom = 2;
   const labelY = 1.5;
-  const labelFontSize = 30;
+  const labelFontSize = 10;
 
   const svg = create("svg")
     .attr("viewBox", viewBox)
     .attr("width", width)
     .attr("height", height)
-    .attr(
-      "style",
-      "max-width: 100%; height: auto; height: intrinsic; background-color: gray;",
-    )
+    .attr("style", "max-width: 100%; height: auto; height: intrinsic;")
     .attr("cursor", "pointer")
     .attr("font-family", "sans-serif")
     .attr("font-size", labelFontSize)

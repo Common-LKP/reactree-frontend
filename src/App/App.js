@@ -1,38 +1,39 @@
+import { useEffect, useState, useRef, useLayoutEffect } from "react";
 import styled from "styled-components";
-import { useEffect, useState } from "react";
+
 import D3Tree from "../components/D3tree";
 import GlobalStyles from "../styles/GlobalStyles.styles";
+import { COLORS, SIZE } from "../assets/constants";
 
 const EntryWrapper = styled.div`
   width: 100%;
   height: 100%;
-  padding: 20px;
-  background-color: #1e2124;
-  color: #7289da;
+  padding: ${SIZE.PADDING};
+  background-color: ${COLORS.BACKGROUND};
+  color: ${COLORS.BUTTON};
 `;
 
 const Header = styled.header`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 16px;
+  margin: ${SIZE.MARGIN};
   font-size: 40px;
 `;
 
 const Nav = styled.nav`
-  margin-bottom: 10px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-evenly;
+  margin-bottom: ${SIZE.PADDING};
 
   > div {
-    width: 48%;
     display: flex;
     flex-direction: column;
     align-items: center;
 
     > p {
-      margin-bottom: 8px;
+      padding-bottom: ${SIZE.PADDING};
     }
   }
 `;
@@ -40,51 +41,108 @@ const Nav = styled.nav`
 const Button = styled.button`
   min-width: 250px;
   height: 30px;
-  color: #7289da;
-  background: #ffffff;
-  border: 2px solid #7289da;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${COLORS.WHITE};
+  color: ${COLORS.BUTTON};
+  border: 2px solid ${COLORS.BUTTON};
   border-radius: 10px;
   font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   transition: 0.3s all ease;
+  cursor: pointer;
 
   &:hover {
-    background: #7289da;
-    color: #ffffff;
+    background-color: ${COLORS.BUTTON};
+    color: ${COLORS.WHITE};
   }
 `;
 
 const Main = styled.main`
+  height: 85%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  background-color: ${COLORS.BACKGROUND};
 
-  > div {
-    width: 48%;
-    height: calc(100vh - 200px);
-    border: 3px solid #424549;
+  .viewLayout {
+    width: 100%;
+    height: 100%;
+    background-color: ${COLORS.VIEW_BACKGROUND};
+    color: white;
+    border: 2px solid ${COLORS.BORDER};
     border-radius: 10px;
+
+    .left {
+      margin-right: ${SIZE.MARGIN};
+    }
+
+    .right {
+      margin-left: ${SIZE.MARGIN};
+    }
+  }
+
+  .sideBar {
+    width: 100px;
+    height: 80%;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: space-around;
     align-items: center;
+    background-color: antiquewhite;
+    border: 2px solid ${COLORS.BORDER};
+    border-radius: 10px;
+
+    .rangeBar {
+      appearance: slider-vertical;
+    }
+
+    .title {
+      text-align: center;
+    }
   }
 `;
 
 function App() {
   const [hasPath, setHasPath] = useState(false);
   const [directoryPath, setDirectoryPath] = useState("");
+  const [pathWidth, setPathWidth] = useState(150);
+  const [pathHeight, setPathHeight] = useState(250);
+  const [layout, setLayout] = useState({ width: 400, height: 850 });
+  const ref = useRef(null);
 
   useEffect(() => {
     window.electronAPI.sendFilePath((event, path) => {
       setDirectoryPath(path);
-
       return path ? setHasPath(true) : null;
     });
-  });
+  }, [directoryPath]);
+
+  useLayoutEffect(() => {
+    setLayout({
+      width: ref.current.clientWidth,
+      height: ref.current.clientHeight,
+    });
+  }, []);
+
+  useEffect(() => {
+    const handleWindow = () => {
+      setLayout({
+        width: ref.current.clientWidth,
+        height: ref.current.clientHeight,
+      });
+    };
+
+    window.addEventListener("resize", handleWindow);
+
+    return () => window.addEventListener("resize", handleWindow);
+  }, []);
+
+  const handleSize = event => {
+    if (event.target.name === "width") setPathWidth(event.target.value);
+    if (event.target.name === "height") setPathHeight(event.target.value);
+  };
 
   return (
     <EntryWrapper>
@@ -94,7 +152,7 @@ function App() {
       </Header>
       <Nav>
         <div>
-          <p>실행하고 싶은 프로젝트의 폴더를 선택해주세요.</p>
+          <p>프로젝트의 폴더를 선택해주세요.</p>
           <Button id="directoryButton">
             {hasPath ? directoryPath : "폴더 선택"}
           </Button>
@@ -112,8 +170,41 @@ function App() {
         </div>
       </Nav>
       <Main>
-        <div>렌더링 화면 구역</div>
-        <D3Tree />
+        <div className="viewLayout left">렌더링 화면 구역</div>
+        <div className="sideBar">
+          <div>
+            <div className="title">Width</div>
+            <input
+              type="range"
+              className="rangeBar"
+              min="0"
+              max="300"
+              name="width"
+              value={pathWidth}
+              onInput={handleSize}
+            />
+          </div>
+          <div>
+            <div className="title">Height</div>
+            <input
+              type="range"
+              className="rangeBar"
+              min="0"
+              max="500"
+              name="height"
+              value={pathHeight}
+              onInput={handleSize}
+            />
+          </div>
+        </div>
+        <div id="treeSection" className="viewLayout right" ref={ref}>
+          <D3Tree
+            pathWidth={pathWidth}
+            pathHeight={pathHeight}
+            layout={layout}
+            setPathHeight={setPathHeight}
+          />
+        </div>
       </Main>
     </EntryWrapper>
   );
