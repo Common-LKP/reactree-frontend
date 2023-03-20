@@ -171,8 +171,6 @@ ipcMain.handle("npmStartButton", async (event, result) => {
   BrowserWindow.getFocusedWindow().webContents.send("send-fiberData", data);
 });
 
-// NOTE: uuid 확인용 콘솔
 ipcMain.on("send-node-data", (event, data) => {
-  console.log(data);
   BrowserWindow.getFocusedWindow().webContents.send("get-node-data", data);
 });

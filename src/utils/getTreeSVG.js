@@ -1,5 +1,5 @@
-/* eslint-disable no-use-before-define */
-import { curveBumpX, hierarchy, tree, create, link, zoom } from "d3";
+/* eslint-disable no-param-reassign */
+import { curveBumpX, hierarchy, tree, create, link, zoom, drag } from "d3";
 
 export default function getTreeSVG(
   data,
@@ -44,25 +44,25 @@ export default function getTreeSVG(
       "style",
       "max-width: 100%; height: auto; height: intrinsic; background-color: gray;",
     )
+    .attr("cursor", "pointer")
     .attr("font-family", "sans-serif")
-    .attr("font-size", 30)
+    .attr("font-size", labelFontSize)
     .call(
-      zoom()
-        .extent([
-          [0, 0],
-          [width, height],
-        ])
-        .scaleExtent([minZoom, maxZoom])
-        .on("zoom", function (event) {
-          const { x, y, k } = event.transform;
-          const [vx, vy, vw, vh] = viewBox;
-          svg.attr("viewBox", [vx + x, vy + y, vw * k, vh * k]);
-          node.attr("transform", d => `translate(${d.x},${d.y}) scale(${k})`);
-          node.select("circle").attr("r", r / k);
-          node
-            .select("text")
-            .attr("dy", `${labelY / k + labelY / r}em`)
-            .attr("font-size", labelFontSize / k);
+      drag()
+        .on("start", event => {
+          svg.attr("cursor", "grab");
+          const [newVX, newVY] = svg.attr("viewBox").split(",").map(Number);
+          svg.attr("start-vx", newVX + event.x);
+          svg.attr("start-vy", newVY + event.y);
+        })
+        .on("drag", event => {
+          svg.attr("cursor", "grabbing");
+          const newX = Number(svg.attr("start-vx")) - event.x;
+          const newY = Number(svg.attr("start-vy")) - event.y;
+          svg.attr("viewBox", [newX, newY, width, height]);
+        })
+        .on("end", () => {
+          svg.attr("cursor", "pointer");
         }),
     );
 
@@ -106,6 +106,26 @@ export default function getTreeSVG(
       .attr("stroke", halo)
       .attr("stroke-width", haloWidth)
       .text((d, i) => L[i]);
+
+  svg.call(
+    zoom()
+      .extent([
+        [0, 0],
+        [width, height],
+      ])
+      .scaleExtent([minZoom, maxZoom])
+      .on("zoom", event => {
+        const { x, y, k } = event.transform;
+        const [vx, vy, vw, vh] = viewBox;
+        svg.attr("viewBox", [vx + x, vy + y, vw * k, vh * k]);
+        node.attr("transform", d => `translate(${d.x},${d.y}) scale(${k})`);
+        node.select("circle").attr("r", r / k);
+        node
+          .select("text")
+          .attr("dy", `${labelY / k + labelY / r}em`)
+          .attr("font-size", labelFontSize / k);
+      }),
+  );
 
   return svg.node();
 }

@@ -31,9 +31,9 @@ Node.prototype.setName = function (node) {
     this.name = node.memoizedProps;
   } else if (node.tag === 8) {
     this.name = "React.StrictMode";
-  } else if (node.tag === 10) {
+  } else if (node.tag === 10 && node.elementType) {
     this.name = node.elementType._context.displayName;
-  } else if (node.tag === 11) {
+  } else if (node.tag === 11 && node.elementType) {
     this.name = node.elementType.target;
   } else if (node.tag === 15) {
     this.name = "SimpleMemoComponent";
