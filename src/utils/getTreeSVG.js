@@ -37,6 +37,7 @@ export default function getTreeSVG(
   let xSpacing = 0;
   let ySpacing = 0;
   let viewBox = `${-width / 2}, -50, ${width}, ${height}`;
+  let scale = 1;
 
   function drawTree() {
     const dx = xSpacing || width / (root.height + padding);
@@ -63,11 +64,7 @@ export default function getTreeSVG(
         drag()
           .on("start", event => {
             svg.attr("cursor", "grab");
-            const [newVX, newVY, newVW, newVH] = svg
-              .attr("viewBox")
-              .split(",")
-              .map(Number);
-            const scale = svg.attr("transform-scale") || 1;
+            const [newVX, newVY, newVW, newVH] = viewBox.split(",").map(Number);
 
             svg.attr("vx-start", newVX + event.x * scale);
             svg.attr("vy-start", newVY + event.y * scale);
@@ -77,7 +74,6 @@ export default function getTreeSVG(
           .on("drag", event => {
             svg.attr("cursor", "grabbing");
 
-            const scale = svg.attr("transform-scale") || 1;
             const newX = Number(svg.attr("vx-start")) - event.x * scale;
             const newY = Number(svg.attr("vy-start")) - event.y * scale;
             const newWidth = svg.attr("vw-start");
@@ -140,7 +136,6 @@ export default function getTreeSVG(
         ])
         .scaleExtent([minZoom, maxZoom])
         .on("start", () => {
-          const scale = svg.attr("transform-scale") || 1;
           const [vx, vy, vw, vh] = svg.attr("viewBox").split(",").map(Number);
           svg.attr("viewBox-start", [vx, vy, vw / scale, vh / scale]);
         })
@@ -158,7 +153,7 @@ export default function getTreeSVG(
             .attr("font-size", labelFontSize / k);
         })
         .on("end", event => {
-          svg.attr("transform-scale", event.transform.k);
+          scale = event.transform.k;
           viewBox = svg.attr("viewBox");
         }),
     );
