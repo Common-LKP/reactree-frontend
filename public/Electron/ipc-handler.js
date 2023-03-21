@@ -17,6 +17,11 @@ const registerIpcHandlers = () => {
       if (!canceled && filePaths.length > 0) {
         [fileInfo.filePath] = filePaths;
 
+        // NOTE: 추후 electron directory 절대경로 변경.
+        exec(
+          `ln -s /Users/gimtaeu/Desktop/reactree-frontend/src/utils/reactree.js ${filePaths}/src/Symlink.js`,
+        );
+
         BrowserWindow.getFocusedWindow().webContents.send(
           "send-file-path",
           fileInfo.filePath,
@@ -30,8 +35,9 @@ const registerIpcHandlers = () => {
   });
 
   ipcMain.handle("npmStartButton", async () => {
+    const win = BrowserWindow.getFocusedWindow();
     const view = new BrowserView();
-    BrowserWindow.getFocusedWindow().setBrowserView(view);
+    win.setBrowserView(view);
     view.setBounds({
       x: 20,
       y: 184,
@@ -55,7 +61,7 @@ const registerIpcHandlers = () => {
       view.webContents.loadURL(`http://localhost:${portNumber}`);
       await waitOn({ resources: [`${os.homedir()}/Downloads/data.json`] });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
 
     const readfile = fs.readFileSync(
@@ -63,10 +69,7 @@ const registerIpcHandlers = () => {
     );
     const fiberFile = JSON.parse(readfile);
 
-    BrowserWindow.getFocusedWindow().webContents.send(
-      "get-node-data",
-      fiberFile,
-    );
+    win.webContents.send("get-node-data", fiberFile);
   });
 };
 

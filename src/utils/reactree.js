@@ -28,7 +28,7 @@ const reactree = root => {
 
     return undefined;
   } catch (error) {
-    return console.log(error);
+    return console.error(error);
   }
 };
 
