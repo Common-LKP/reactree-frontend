@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 /* eslint-disable no-unused-vars */
 const {
   app,
@@ -11,6 +12,7 @@ const { exec, execSync } = require("child_process");
 const path = require("path");
 const os = require("os");
 const waitOn = require("wait-on");
+const fs = require("fs");
 
 const fileInfo = {
   filePath: null,
@@ -47,6 +49,7 @@ const portNumber = checkPortNumber();
 
 const quitApplication = () => {
   try {
+    exec("rm data.json", { cwd: "/Users/igeonhwa/Downloads" });
     execSync(
       `lsof -i :${portNumber} | grep LISTEN | awk '{print $2}' | xargs kill`,
     );
@@ -83,6 +86,27 @@ const handleErrorMessage = error => {
       message: "Error",
       detail,
     });
+  }
+};
+
+const catchSaveFile = () => {
+  try {
+    const stdout = execSync("ls | grep data.json", {
+      cwd: "/Users/igeonhwa/Downloads",
+    }).toString();
+    const lines = stdout.split(os.EOL);
+
+    if (lines[lines.length - 1] === "") {
+      lines.pop();
+    }
+
+    if (lines.length) {
+      return true;
+    }
+  } catch (error) {
+    setTimeout(() => {
+      catchSaveFile();
+    }, 1000);
   }
 };
 
@@ -160,15 +184,13 @@ ipcMain.handle("npmStartButton", async (event, result) => {
   await waitOn({ resources: [`http://localhost:${portNumber}`] });
   view.webContents.loadURL(`http://localhost:${portNumber}`);
 
-  const JScodes = `
-    const data = document.querySelector("#root").getAttribute("key");
-    JSON.parse(data);
-  `;
-  const data = await view.webContents.executeJavaScript(JScodes, true);
+  catchSaveFile();
+  await waitOn({ resources: ["/Users/igeonhwa/Downloads/data.json"] });
 
-  BrowserWindow.getFocusedWindow().webContents.send("send-fiberData", data);
-});
+  const readfile = fs.readFileSync(
+    path.join("/Users/igeonhwa/Downloads/data.json"),
+  );
+  const fiberFile = JSON.parse(readfile);
 
-ipcMain.on("send-node-data", (event, data) => {
-  BrowserWindow.getFocusedWindow().webContents.send("get-node-data", data);
+  BrowserWindow.getFocusedWindow().webContents.send("get-node-data", fiberFile);
 });
