@@ -56,8 +56,10 @@ export default function getTreeSVG(
             .attr("viewBox")
             .split(",")
             .map(Number);
-          svg.attr("vx-start", newVX + event.x);
-          svg.attr("vy-start", newVY + event.y);
+          const scale = svg.attr("transform-scale") || 1;
+
+          svg.attr("vx-start", newVX + event.x * scale);
+          svg.attr("vy-start", newVY + event.y * scale);
           svg.attr("vw-start", newVW);
           svg.attr("vh-start", newVH);
 
@@ -74,8 +76,9 @@ export default function getTreeSVG(
         .on("drag", event => {
           svg.attr("cursor", "grabbing");
 
-          const newX = Number(svg.attr("vx-start")) - event.x;
-          const newY = Number(svg.attr("vy-start")) - event.y;
+          const scale = svg.attr("transform-scale") || 1;
+          const newX = Number(svg.attr("vx-start")) - event.x * scale;
+          const newY = Number(svg.attr("vy-start")) - event.y * scale;
           const newWidth = svg.attr("vw-start");
           const newHeight = svg.attr("vh-start");
 
@@ -148,6 +151,9 @@ export default function getTreeSVG(
           .select("text")
           .attr("dy", `${labelY / k + labelY / r}em`)
           .attr("font-size", labelFontSize / k);
+      })
+      .on("end", event => {
+        svg.attr("transform-scale", event.transform.k);
       }),
   );
 
