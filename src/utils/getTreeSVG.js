@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 import {
   curveBumpX,
   hierarchy,
@@ -31,12 +32,15 @@ export default function getTreeSVG(
 ) {
   const root = hierarchy(data, children);
   const descendants = root.descendants();
-  const L = descendants.map(d => label(d.data, d));
+  const labelList = descendants.map(d => label(d.data, d));
 
   const svg = create("svg");
   let xSpacing = 0;
   let ySpacing = 0;
-  let viewBox = `${-width / 2}, -50, ${width}, ${height}`;
+  let vx = -width / 2;
+  let vy = -50;
+  let vw = width;
+  let vh = height;
   let scale = 1;
 
   function drawTree() {
@@ -50,7 +54,7 @@ export default function getTreeSVG(
     const labelFontSize = 10;
 
     svg
-      .attr("viewBox", viewBox)
+      .attr("viewBox", [vx, vy, vw, vh])
       .attr("width", width)
       .attr("height", height)
       .attr(
@@ -64,26 +68,22 @@ export default function getTreeSVG(
         drag()
           .on("start", event => {
             svg.attr("cursor", "grab");
-            const [newVX, newVY, newVW, newVH] = viewBox.split(",").map(Number);
 
-            svg.attr("vx-start", newVX + event.x * scale);
-            svg.attr("vy-start", newVY + event.y * scale);
-            svg.attr("vw-start", newVW);
-            svg.attr("vh-start", newVH);
+            vx += event.x * scale;
+            vy += event.y * scale;
           })
           .on("drag", event => {
             svg.attr("cursor", "grabbing");
 
-            const newX = Number(svg.attr("vx-start")) - event.x * scale;
-            const newY = Number(svg.attr("vy-start")) - event.y * scale;
-            const newWidth = svg.attr("vw-start");
-            const newHeight = svg.attr("vh-start");
+            const newX = vx - event.x * scale;
+            const newY = vy - event.y * scale;
 
-            svg.attr("viewBox", [newX, newY, newWidth, newHeight]);
+            svg.attr("viewBox", [newX, newY, vw, vh]);
           })
           .on("end", () => {
             svg.attr("cursor", "pointer");
-            viewBox = svg.attr("viewBox");
+            vx = svg.attr("viewBox").split(",").map(Number)[0];
+            vy = svg.attr("viewBox").split(",").map(Number)[1];
           }),
       );
 
@@ -118,7 +118,7 @@ export default function getTreeSVG(
       .attr("fill", d => (d.children ? stroke : fill))
       .attr("r", r);
 
-    if (L)
+    if (labelList)
       node
         .append("text")
         .attr("dy", `${labelY}em`)
@@ -126,7 +126,7 @@ export default function getTreeSVG(
         .attr("paint-order", "stroke")
         .attr("stroke", halo)
         .attr("stroke-width", haloWidth)
-        .text((d, i) => L[i]);
+        .text((d, i) => labelList[i]);
 
     svg.call(
       zoom()
@@ -136,15 +136,11 @@ export default function getTreeSVG(
         ])
         .scaleExtent([minZoom, maxZoom])
         .on("start", () => {
-          const [vx, vy, vw, vh] = svg.attr("viewBox").split(",").map(Number);
-          svg.attr("viewBox-start", [vx, vy, vw / scale, vh / scale]);
+          vw /= scale;
+          vh /= scale;
         })
         .on("zoom", event => {
           const { k } = event.transform;
-          const [vx, vy, vw, vh] = svg
-            .attr("viewBox-start")
-            .split(",")
-            .map(Number);
           svg.attr("viewBox", [vx, vy, vw * k, vh * k]);
           node.select("circle").attr("r", r / k);
           node
@@ -154,7 +150,8 @@ export default function getTreeSVG(
         })
         .on("end", event => {
           scale = event.transform.k;
-          viewBox = svg.attr("viewBox");
+          vw = svg.attr("viewBox").split(",").map(Number)[2];
+          vh = svg.attr("viewBox").split(",").map(Number)[3];
         }),
     );
   }
