@@ -1,6 +1,9 @@
-import { useEffect, useState, useRef, useLayoutEffect } from "react";
+import { useEffect, useRef, useLayoutEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 
+import { pathActions } from "../features/pathSlice";
+import { d3treeActions } from "../features/d3treeSlice";
 import D3Tree from "../components/D3tree";
 import GlobalStyles from "../styles/GlobalStyles.styles";
 import { COLORS, SIZE } from "../assets/constants";
@@ -105,43 +108,50 @@ const Main = styled.main`
 `;
 
 function App() {
-  const [hasPath, setHasPath] = useState(false);
-  const [directoryPath, setDirectoryPath] = useState("");
-  const [pathWidth, setPathWidth] = useState(150);
-  const [pathHeight, setPathHeight] = useState(250);
-  const [layout, setLayout] = useState({ width: 400, height: 850 });
+  const dispatch = useDispatch();
+  const { hasPath, directoryPath } = useSelector(state => state.path);
+  const { widthSpacing, heightSpacing, layoutWidth, layoutHeight } =
+    useSelector(state => state.d3tree);
   const ref = useRef(null);
 
   useEffect(() => {
     window.electronAPI.sendFilePath((event, path) => {
-      setDirectoryPath(path);
-      return path ? setHasPath(true) : null;
+      dispatch(pathActions.setDirectoryPath({ path }));
+      return path ? dispatch(pathActions.checkPath()) : null;
     });
-  }, [directoryPath]);
+  }, [directoryPath, dispatch]);
 
   useLayoutEffect(() => {
-    setLayout({
-      width: ref.current.clientWidth,
-      height: ref.current.clientHeight,
-    });
-  }, []);
+    dispatch(
+      d3treeActions.setLayout({
+        clientWidth: ref.current.clientWidth,
+        clientHeight: ref.current.clientHeight,
+      }),
+    );
+  }, [layoutWidth, layoutHeight, dispatch]);
 
   useEffect(() => {
     const handleWindow = () => {
-      setLayout({
-        width: ref.current.clientWidth,
-        height: ref.current.clientHeight,
-      });
+      dispatch(
+        d3treeActions.setLayout({
+          clientWidth: ref.current.clientWidth,
+          clientHeight: ref.current.clientHeight,
+        }),
+      );
     };
 
     window.addEventListener("resize", handleWindow);
 
     return () => window.addEventListener("resize", handleWindow);
-  }, []);
+  }, [layoutWidth, layoutHeight, dispatch]);
 
   const handleSize = event => {
-    if (event.target.name === "width") setPathWidth(event.target.value);
-    if (event.target.name === "height") setPathHeight(event.target.value);
+    if (event.target.name === "width") {
+      dispatch(d3treeActions.setWidthSpacing({ width: event.target.value }));
+    }
+    if (event.target.name === "height") {
+      dispatch(d3treeActions.setHeightSpacing({ height: event.target.value }));
+    }
   };
 
   return (
@@ -175,35 +185,32 @@ function App() {
           <div>
             <div className="title">Width</div>
             <input
+              id="sliderX"
               type="range"
               className="rangeBar"
               min="0"
               max="300"
               name="width"
-              value={pathWidth}
+              value={widthSpacing}
               onInput={handleSize}
             />
           </div>
           <div>
             <div className="title">Height</div>
             <input
+              id="sliderY"
               type="range"
               className="rangeBar"
               min="0"
               max="500"
               name="height"
-              value={pathHeight}
+              value={heightSpacing}
               onInput={handleSize}
             />
           </div>
         </div>
-        <div id="treeSection" className="viewLayout right" ref={ref}>
-          <D3Tree
-            pathWidth={pathWidth}
-            pathHeight={pathHeight}
-            layout={layout}
-            setPathHeight={setPathHeight}
-          />
+        <div className="viewLayout right" ref={ref}>
+          <D3Tree />
         </div>
       </Main>
     </EntryWrapper>

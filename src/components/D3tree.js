@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { hierarchy } from "d3";
 
@@ -25,12 +26,9 @@ const Wrapper = styled.div`
   }
 `;
 
-export default function D3Tree({
-  pathWidth,
-  pathHeight,
-  layout,
-  setPathHeight,
-}) {
+export default function D3Tree() {
+  const { widthSpacing, heightSpacing, layoutWidth, layoutHeight } =
+    useSelector(state => state.d3tree);
   const [hierarchyData, setHierarchyData] = useState(hierarchy(mockTreeData));
   const fiberTree = new Node();
 
@@ -56,11 +54,10 @@ export default function D3Tree({
 
     const chart = getTreeSVG(hierarchyData.data, {
       label: d => d.name,
-      width: layout.width,
-      height: layout.height,
-      dxWidth: pathWidth,
-      dyHeight: pathHeight,
-      setDyHeigth: setPathHeight,
+      width: layoutWidth,
+      height: layoutHeight,
+      dxWidth: null,
+      dyHeight: null,
     });
 
     if (svg.current.firstChild) svg.current.removeChild(svg.current.firstChild);
@@ -93,7 +90,7 @@ export default function D3Tree({
         setNodeState(null);
       });
     });
-  }, [hierarchyData, pathWidth, pathHeight, layout]);
+  }, [hierarchyData, widthSpacing, heightSpacing]);
 
   return (
     <Wrapper>
