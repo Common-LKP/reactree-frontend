@@ -17,12 +17,10 @@ const getCircularReplacer = (key, value) => {
 const reactree = root => {
   try {
     const fiber = deepCopy(root);
-    console.log(fiber);
-    // createNode(fiber.current.alternate, fiberTree);
-    // console.log(fiberTree);
     const fiberJson = JSON.stringify(fiber.current, getCircularReplacer);
     const link = document.createElement("a");
-    const jsonString = `data:text/json;chatset=utf-8,${fiberJson}`;
+    const jsonString = `data:text/json;charset=utf-8,${fiberJson}`;
+
     link.href = jsonString;
     link.download = "data.json";
     link.click();

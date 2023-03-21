@@ -37,10 +37,8 @@ export default function D3Tree({
   const getTreeData = async function () {
     try {
       await window.electronAPI.getNodeData((event, value) => {
-        console.log("value :", value);
-        console.log("fiberTree", fiberTree);
         createNode(value, fiberTree);
-        setHierarchyData(hierarchy(value));
+        setHierarchyData(hierarchy(fiberTree));
       });
     } catch (error) {
       console.error(error);

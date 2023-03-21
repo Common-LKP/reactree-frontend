@@ -49,7 +49,7 @@ const portNumber = checkPortNumber();
 
 const quitApplication = () => {
   try {
-    exec("rm data.json", { cwd: "/Users/igeonhwa/Downloads" });
+    exec("rm data.json", { cwd: `${os.homedir()}/Downloads` });
     execSync(
       `lsof -i :${portNumber} | grep LISTEN | awk '{print $2}' | xargs kill`,
     );
@@ -63,7 +63,7 @@ const handleErrorMessage = error => {
   const lines = error.split(os.EOL);
   let detail;
 
-  if (lines[lines.length - 1] === "") {
+  if (lines.at(-1) === "") {
     lines.pop();
   }
 
@@ -96,7 +96,7 @@ const catchSaveFile = () => {
     }).toString();
     const lines = stdout.split(os.EOL);
 
-    if (lines[lines.length - 1] === "") {
+    if (lines.at(-1) === "") {
       lines.pop();
     }
 
@@ -104,9 +104,7 @@ const catchSaveFile = () => {
       return true;
     }
   } catch (error) {
-    setTimeout(() => {
-      catchSaveFile();
-    }, 1000);
+    console.log(error);
   }
 };
 
@@ -181,11 +179,15 @@ ipcMain.handle("npmStartButton", async (event, result) => {
     },
   );
 
-  await waitOn({ resources: [`http://localhost:${portNumber}`] });
-  view.webContents.loadURL(`http://localhost:${portNumber}`);
+  try {
+    await waitOn({ resources: [`http://localhost:${portNumber}`] });
+    view.webContents.loadURL(`http://localhost:${portNumber}`);
 
+    await waitOn({ resources: ["/Users/igeonhwa/Downloads/data.json"] });
+  } catch (error) {
+    console.log(error);
+  }
   catchSaveFile();
-  await waitOn({ resources: ["/Users/igeonhwa/Downloads/data.json"] });
 
   const readfile = fs.readFileSync(
     path.join("/Users/igeonhwa/Downloads/data.json"),
