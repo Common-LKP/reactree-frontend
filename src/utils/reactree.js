@@ -1,5 +1,3 @@
-/* eslint-disable no-underscore-dangle */
-/* eslint-disable consistent-return */
 import deepCopy from "./deepCopy";
 
 const seen = new WeakSet();
@@ -7,10 +5,13 @@ const seen = new WeakSet();
 const getCircularReplacer = (key, value) => {
   if (key === "elementType" && typeof value === "function")
     return { name: value.name };
+
   if (typeof value === "object" && value !== null) {
-    if (seen.has(value)) return;
+    if (seen.has(value)) return undefined;
+
     seen.add(value);
   }
+
   return value;
 };
 
@@ -24,8 +25,10 @@ const reactree = root => {
     link.href = jsonString;
     link.download = "data.json";
     link.click();
+
+    return undefined;
   } catch (error) {
-    console.log(error);
+    return console.log(error);
   }
 };
 

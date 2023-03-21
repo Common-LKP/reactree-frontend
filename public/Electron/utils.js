@@ -1,6 +1,6 @@
-const { execSync } = require("child_process");
-const os = require("os");
 const { dialog, app } = require("electron");
+const { exec, execSync } = require("child_process");
+const os = require("os");
 
 const fileInfo = {
   filePath: null,
@@ -14,7 +14,7 @@ const checkPortNumber = () => {
   ).toString();
   const lines = stdout.split(os.EOL);
 
-  if (lines[lines.length - 1] === "") {
+  if (lines.at(-1) === "") {
     lines.pop();
   }
 
@@ -37,6 +37,7 @@ const portNumber = checkPortNumber();
 
 const quitApplication = () => {
   try {
+    exec("rm data.json", { cwd: `${os.homedir()}/Downloads` });
     execSync(
       `lsof -i :${portNumber} | grep LISTEN | awk '{print $2}' | xargs kill`,
     );
@@ -50,7 +51,7 @@ const handleErrorMessage = error => {
   const lines = error.split(os.EOL);
   let detail;
 
-  if (lines[lines.length - 1] === "") {
+  if (lines.at(-1) === "") {
     lines.pop();
   }
 

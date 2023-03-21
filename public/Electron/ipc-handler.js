@@ -2,6 +2,9 @@ const { ipcMain, BrowserWindow, BrowserView, dialog } = require("electron");
 const { exec } = require("child_process");
 const path = require("path");
 const waitOn = require("wait-on");
+const os = require("os");
+const fs = require("fs");
+
 const { fileInfo, portNumber, handleErrorMessage } = require("./utils");
 
 const registerIpcHandlers = () => {
@@ -47,20 +50,23 @@ const registerIpcHandlers = () => {
       },
     );
 
-    await waitOn({ resources: [`http://localhost:${portNumber}`] });
-    view.webContents.loadURL(`http://localhost:${portNumber}`);
+    try {
+      await waitOn({ resources: [`http://localhost:${portNumber}`] });
+      view.webContents.loadURL(`http://localhost:${portNumber}`);
+      await waitOn({ resources: [`${os.homedir()}/Downloads/data.json`] });
+    } catch (error) {
+      console.log(error);
+    }
 
-    const JScodes = `
-      const data = document.querySelector("#root").getAttribute("key");
-      JSON.parse(data);
-    `;
-    const data = await view.webContents.executeJavaScript(JScodes, true);
+    const readfile = fs.readFileSync(
+      path.join(`${os.homedir()}/Downloads/data.json`),
+    );
+    const fiberFile = JSON.parse(readfile);
 
-    BrowserWindow.getFocusedWindow().webContents.send("send-fiberData", data);
-  });
-
-  ipcMain.on("send-node-data", (event, data) => {
-    BrowserWindow.getFocusedWindow().webContents.send("get-node-data", data);
+    BrowserWindow.getFocusedWindow().webContents.send(
+      "get-node-data",
+      fiberFile,
+    );
   });
 };
 
