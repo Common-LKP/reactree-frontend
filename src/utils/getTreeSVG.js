@@ -136,16 +136,17 @@ export default function getTreeSVG(
       ])
       .scaleExtent([minZoom, maxZoom])
       .on("start", () => {
+        const scale = svg.attr("transform-scale") || 1;
         const [vx, vy, vw, vh] = svg.attr("viewBox").split(",").map(Number);
-        svg.attr("viewBox-start", [vx, vy, vw, vh]);
+        svg.attr("viewBox-start", [vx, vy, vw / scale, vh / scale]);
       })
       .on("zoom", event => {
-        const { x, y, k } = event.transform;
+        const { k } = event.transform;
         const [vx, vy, vw, vh] = svg
           .attr("viewBox-start")
           .split(",")
           .map(Number);
-        svg.attr("viewBox", [vx + x, vy + y, vw * k, vh * k]);
+        svg.attr("viewBox", [vx, vy, vw * k, vh * k]);
         node.select("circle").attr("r", r / k);
         node
           .select("text")
