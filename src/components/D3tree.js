@@ -30,7 +30,7 @@ export default function D3Tree() {
   const [hierarchyData, setHierarchyData] = useState(hierarchy(mockTreeData));
   const fiberTree = new Node();
 
-  const getTreeData = async function () {
+  const getTreeData = async () => {
     try {
       await window.electronAPI.getNodeData((event, value) => {
         createNode(value, fiberTree);

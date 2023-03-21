@@ -9,18 +9,18 @@ function Node() {
   this.children = [];
 }
 
-const pushState = function (memoizedState, stateArray) {
+const pushState = (memoizedState, stateArray) => {
   if (!memoizedState) return;
 
   stateArray.push(memoizedState.memoizedState);
   pushState(memoizedState.next, stateArray);
 };
 
-Node.prototype.addChild = function (child) {
+Node.prototype.addChild = child => {
   this.children.push(child);
 };
 
-Node.prototype.setName = function (node) {
+Node.prototype.setName = node => {
   if (node.tag === 0) {
     this.name = node.elementType.name;
   } else if (node.tag === 3) {
@@ -40,7 +40,7 @@ Node.prototype.setName = function (node) {
   }
 };
 
-Node.prototype.addProps = function (node) {
+Node.prototype.addProps = node => {
   if (!node.memoizedProps) return;
 
   if (node.tag === 0 || node.tag === 1) {
@@ -48,7 +48,7 @@ Node.prototype.addProps = function (node) {
   }
 };
 
-Node.prototype.addState = function (node) {
+Node.prototype.addState = node => {
   if (!node.memoizedState) return;
 
   if (node.tag === 0 || node.tag === 1) {
