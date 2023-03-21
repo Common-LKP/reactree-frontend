@@ -1,5 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable func-names */
 /* eslint-disable no-underscore-dangle */
 import { v4 as uuidv4 } from "uuid";
 

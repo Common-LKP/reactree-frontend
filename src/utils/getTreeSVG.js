@@ -1,5 +1,3 @@
-/* eslint-disable no-use-before-define */
-/* eslint-disable no-param-reassign */
 import { curveBumpX, hierarchy, tree, create, link, zoom, drag } from "d3";
 
 export default function getTreeSVG(
