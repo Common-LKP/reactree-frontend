@@ -62,16 +62,6 @@ export default function getTreeSVG(
           svg.attr("vy-start", newVY + event.y * scale);
           svg.attr("vw-start", newVW);
           svg.attr("vh-start", newVH);
-
-          const zoomedCircleRadius = node.select("circle").attr("r");
-          const zoomedLabelDy = node.select("text").attr("dy");
-          const zoomedFontSize = node.select("text").attr("font-size");
-
-          node.select("circle").attr("r", zoomedCircleRadius);
-          node
-            .select("text")
-            .attr("dy", zoomedLabelDy)
-            .attr("font-size", zoomedFontSize);
         })
         .on("drag", event => {
           svg.attr("cursor", "grabbing");

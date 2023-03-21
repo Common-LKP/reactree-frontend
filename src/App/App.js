@@ -175,7 +175,6 @@ function App() {
           <div>
             <div className="title">Width</div>
             <input
-              id="sliderX"
               type="range"
               className="rangeBar"
               min="0"

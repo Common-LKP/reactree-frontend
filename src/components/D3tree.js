@@ -58,8 +58,8 @@ export default function D3Tree({
       label: d => d.name,
       width: layout.width,
       height: layout.height,
-      dxWidth: null,
-      dyHeight: null,
+      dxWidth: pathWidth,
+      dyHeight: pathHeight,
       setDyHeigth: setPathHeight,
     });
 
