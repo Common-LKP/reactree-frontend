@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 /* eslint-disable no-param-reassign */
 import { curveBumpX, hierarchy, tree, create, link, zoom, drag } from "d3";
 
@@ -40,7 +41,10 @@ export default function getTreeSVG(
     .attr("viewBox", viewBox)
     .attr("width", width)
     .attr("height", height)
-    .attr("style", "max-width: 100%; height: auto; height: intrinsic;")
+    .attr(
+      "style",
+      "max-width: 100%; height: auto; height: intrinsic; background: gray",
+    )
     .attr("cursor", "pointer")
     .attr("font-family", "sans-serif")
     .attr("font-size", labelFontSize)
@@ -58,9 +62,7 @@ export default function getTreeSVG(
           const newY = Number(svg.attr("start-vy")) - event.y;
           svg.attr("viewBox", [newX, newY, width, height]);
         })
-        .on("end", () => {
-          svg.attr("cursor", "pointer");
-        }),
+        .on("end", () => svg.attr("cursor", "pointer")),
     );
 
   svg
@@ -111,9 +113,16 @@ export default function getTreeSVG(
         [width, height],
       ])
       .scaleExtent([minZoom, maxZoom])
+      .on("start", () => {
+        const [vx, vy, vw, vh] = svg.attr("viewBox").split(",").map(Number);
+        svg.attr("viewBox-start", [vx, vy, vw, vh]);
+      })
       .on("zoom", event => {
         const { x, y, k } = event.transform;
-        const [vx, vy, vw, vh] = viewBox;
+        const [vx, vy, vw, vh] = svg
+          .attr("viewBox-start")
+          .split(",")
+          .map(Number);
         svg.attr("viewBox", [vx + x, vy + y, vw * k, vh * k]);
         node.attr("transform", d => `translate(${d.x},${d.y}) scale(${k})`);
         node.select("circle").attr("r", r / k);
