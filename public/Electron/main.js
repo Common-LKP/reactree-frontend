@@ -3,6 +3,25 @@ const path = require("path");
 const { quitApplication } = require("./utils");
 const { registerIpcHandlers } = require("./ipc-handler");
 
+const catchSaveFile = () => {
+  try {
+    const stdout = execSync("ls | grep data.json", {
+      cwd: "/Users/igeonhwa/Downloads",
+    }).toString();
+    const lines = stdout.split(os.EOL);
+
+    if (lines.at(-1) === "") {
+      lines.pop();
+    }
+
+    if (lines.length) {
+      return true;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const createWindow = () => {
   const win = new BrowserWindow({
     width: 1040,
