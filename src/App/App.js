@@ -11,7 +11,7 @@ import { COLORS, SIZE } from "../assets/constants";
 const EntryWrapper = styled.div`
   width: 100%;
   height: 100%;
-  padding: ${SIZE.PADDING};
+  padding: ${SIZE.PADDING}px;
   background-color: ${COLORS.BACKGROUND};
   color: ${COLORS.BUTTON};
 `;
@@ -20,7 +20,7 @@ const Header = styled.header`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: ${SIZE.MARGIN};
+  margin: ${SIZE.MARGIN}px;
   font-size: 40px;
 `;
 
@@ -28,7 +28,7 @@ const Nav = styled.nav`
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  margin-bottom: ${SIZE.PADDING};
+  margin-bottom: ${SIZE.PADDING}px;
 
   > div {
     display: flex;
@@ -36,7 +36,7 @@ const Nav = styled.nav`
     align-items: center;
 
     > p {
-      padding-bottom: ${SIZE.PADDING};
+      padding-bottom: ${SIZE.PADDING}px;
     }
   }
 `;
@@ -78,17 +78,17 @@ const Main = styled.main`
     border-radius: 10px;
 
     .left {
-      margin-right: ${SIZE.MARGIN};
+      margin-right: ${SIZE.MARGIN}px;
     }
 
     .right {
-      margin-left: ${SIZE.MARGIN};
+      margin-left: ${SIZE.MARGIN}px;
     }
   }
 
   .sideBar {
-    width: 100px;
-    height: 80%;
+    width: ${SIZE.SIDEBAR_WIDTH}px;
+    height: ${SIZE.SIDEBAR_HEIGHT}%;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -113,6 +113,7 @@ function App() {
   const { widthSpacing, heightSpacing, layoutWidth, layoutHeight } =
     useSelector(state => state.d3tree);
   const ref = useRef(null);
+  const leftRef = useRef(null);
 
   useEffect(() => {
     window.electronAPI.sendFilePath((event, path) => {
@@ -180,7 +181,7 @@ function App() {
         </div>
       </Nav>
       <Main>
-        <div className="viewLayout left">렌더링 화면 구역</div>
+        <div className="viewLayout left" ref={leftRef} />
         <div className="sideBar">
           <div>
             <div className="title">Width</div>

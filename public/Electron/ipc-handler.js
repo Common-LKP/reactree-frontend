@@ -33,12 +33,11 @@ const registerIpcHandlers = () => {
     const view = new BrowserView();
     BrowserWindow.getFocusedWindow().setBrowserView(view);
     view.setBounds({
-      x: 20,
-      y: 184,
-      width: 480,
-      height: 672,
+      x: 8,
+      y: 164,
+      width: 458,
+      height: 724,
     });
-    view.setBackgroundColor("#ffffff");
 
     view.webContents.loadFile(path.join(__dirname, "../views/loading.html"));
 

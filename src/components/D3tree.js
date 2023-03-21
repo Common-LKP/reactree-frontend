@@ -26,8 +26,7 @@ const Wrapper = styled.div`
 `;
 
 export default function D3Tree() {
-  const { widthSpacing, heightSpacing, layoutWidth, layoutHeight } =
-    useSelector(state => state.d3tree);
+  const { layoutWidth, layoutHeight } = useSelector(state => state.d3tree);
   const [hierarchyData, setHierarchyData] = useState(hierarchy(mockTreeData));
   const fiberTree = new Node();
 
@@ -89,7 +88,7 @@ export default function D3Tree() {
         setNodeState(null);
       });
     });
-  }, [hierarchyData, widthSpacing, heightSpacing]);
+  }, [hierarchyData, layoutWidth, layoutHeight]);
 
   return (
     <Wrapper>
