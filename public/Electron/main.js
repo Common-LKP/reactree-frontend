@@ -22,9 +22,7 @@ app.whenReady().then(() => {
   registerIpcHandlers();
 
   if (process.platform === "darwin") {
-    globalShortcut.register("Command+Q", () => {
-      quitApplication();
-    });
+    globalShortcut.register("Command+Q", quitApplication);
   }
 
   app.on("activate", () => {
@@ -33,3 +31,5 @@ app.whenReady().then(() => {
     }
   });
 });
+
+app.on("window-all-closed", quitApplication);

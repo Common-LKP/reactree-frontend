@@ -4,8 +4,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   widthSpacing: 150,
   heightSpacing: 250,
-  layoutWidth: 400,
-  layoutHeight: 850,
+  layoutWidth: 700,
+  layoutHeight: 1100,
 };
 
 const d3treeSlice = createSlice({

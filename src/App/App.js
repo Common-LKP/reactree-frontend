@@ -110,8 +110,7 @@ const Main = styled.main`
 function App() {
   const dispatch = useDispatch();
   const { hasPath, directoryPath } = useSelector(state => state.path);
-  const { widthSpacing, heightSpacing, layoutWidth, layoutHeight } =
-    useSelector(state => state.d3tree);
+  const { layoutWidth, layoutHeight } = useSelector(state => state.d3tree);
   const ref = useRef(null);
 
   useEffect(() => {
@@ -144,15 +143,6 @@ function App() {
 
     return () => window.addEventListener("resize", handleWindow);
   }, [layoutWidth, layoutHeight, dispatch]);
-
-  const handleSize = event => {
-    if (event.target.name === "width") {
-      dispatch(d3treeActions.setWidthSpacing({ width: event.target.value }));
-    }
-    if (event.target.name === "height") {
-      dispatch(d3treeActions.setHeightSpacing({ height: event.target.value }));
-    }
-  };
 
   return (
     <EntryWrapper>
@@ -188,11 +178,9 @@ function App() {
               id="sliderX"
               type="range"
               className="rangeBar"
-              min="0"
-              max="300"
+              min="10"
+              max="600"
               name="width"
-              value={widthSpacing}
-              onInput={handleSize}
             />
           </div>
           <div>
@@ -201,11 +189,9 @@ function App() {
               id="sliderY"
               type="range"
               className="rangeBar"
-              min="0"
+              min="50"
               max="500"
               name="height"
-              value={heightSpacing}
-              onInput={handleSize}
             />
           </div>
         </div>
