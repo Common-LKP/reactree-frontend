@@ -52,15 +52,34 @@ export default function getTreeSVG(
       drag()
         .on("start", event => {
           svg.attr("cursor", "grab");
-          const [newVX, newVY] = svg.attr("viewBox").split(",").map(Number);
-          svg.attr("start-vx", newVX + event.x);
-          svg.attr("start-vy", newVY + event.y);
+          const [newVX, newVY, newVW, newVH] = svg
+            .attr("viewBox")
+            .split(",")
+            .map(Number);
+          svg.attr("vx-start", newVX + event.x);
+          svg.attr("vy-start", newVY + event.y);
+          svg.attr("vw-start", newVW);
+          svg.attr("vh-start", newVH);
+
+          const zoomedCircleRadius = node.select("circle").attr("r");
+          const zoomedLabelDy = node.select("text").attr("dy");
+          const zoomedFontSize = node.select("text").attr("font-size");
+
+          node.select("circle").attr("r", zoomedCircleRadius);
+          node
+            .select("text")
+            .attr("dy", zoomedLabelDy)
+            .attr("font-size", zoomedFontSize);
         })
         .on("drag", event => {
           svg.attr("cursor", "grabbing");
-          const newX = Number(svg.attr("start-vx")) - event.x;
-          const newY = Number(svg.attr("start-vy")) - event.y;
-          svg.attr("viewBox", [newX, newY, width, height]);
+
+          const newX = Number(svg.attr("vx-start")) - event.x;
+          const newY = Number(svg.attr("vy-start")) - event.y;
+          const newWidth = svg.attr("vw-start");
+          const newHeight = svg.attr("vh-start");
+
+          svg.attr("viewBox", [newX, newY, newWidth, newHeight]);
         })
         .on("end", () => svg.attr("cursor", "pointer")),
     );
@@ -124,7 +143,6 @@ export default function getTreeSVG(
           .split(",")
           .map(Number);
         svg.attr("viewBox", [vx + x, vy + y, vw * k, vh * k]);
-        node.attr("transform", d => `translate(${d.x},${d.y}) scale(${k})`);
         node.select("circle").attr("r", r / k);
         node
           .select("text")
