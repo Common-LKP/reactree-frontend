@@ -1,6 +1,6 @@
-const { dialog, app } = require("electron");
-const { exec, execSync } = require("child_process");
+const { execSync, exec } = require("child_process");
 const os = require("os");
+const { dialog, app } = require("electron");
 
 const fileInfo = {
   filePath: null,
@@ -47,8 +47,8 @@ const quitApplication = () => {
   }
 };
 
-const handleErrorMessage = error => {
-  const lines = error.split(os.EOL);
+const handleErrorMessage = (error, stdout, sdterr) => {
+  const lines = sdterr.split(os.EOL);
   let detail;
 
   if (lines.at(-1) === "") {
@@ -56,7 +56,7 @@ const handleErrorMessage = error => {
   }
 
   for (let i = 0; i < lines.length; i += 1) {
-    if (lines[i].includes("no such file")) {
+    if (lines[i].includes("No such file")) {
       detail = "올바르지 않은 폴더 경로입니다.";
       break;
     }
@@ -64,6 +64,10 @@ const handleErrorMessage = error => {
     if (lines[i].includes("Cannot find module")) {
       detail = "모듈정보를 찾을 수 없습니다.";
       break;
+    }
+
+    if (lines[i].includes("npm ERR!")) {
+      detail = "NPM Error";
     }
   }
 

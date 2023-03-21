@@ -5,6 +5,8 @@ const waitOn = require("wait-on");
 const os = require("os");
 const fs = require("fs");
 
+const userHomeDir = os.homedir();
+
 const { fileInfo, portNumber, handleErrorMessage } = require("./utils");
 
 const registerIpcHandlers = () => {
@@ -17,9 +19,12 @@ const registerIpcHandlers = () => {
       if (!canceled && filePaths.length > 0) {
         [fileInfo.filePath] = filePaths;
 
-        // NOTE: 추후 electron directory 절대경로 변경.
+        const reactreePath = path.join(userHomeDir);
         exec(
-          `ln -s /Users/gimtaeu/Desktop/reactree-frontend/src/utils/reactree.js ${filePaths}/src/Symlink.js`,
+          `ln -s ${reactreePath}/Desktop/reactree-frontend/src/utils/reactree.js ${filePaths}/src/Symlink.js`,
+          (error, stdout, stderr) => {
+            handleErrorMessage(error, stdout, stderr);
+          },
         );
 
         BrowserWindow.getFocusedWindow().webContents.send(
@@ -46,26 +51,24 @@ const registerIpcHandlers = () => {
     });
     view.setBackgroundColor("#ffffff");
 
-    view.webContents.loadFile(path.join(__dirname, "../views/loading.html"));
-
     exec(
       `PORT=${portNumber} BROWSER=none npm start`,
       { cwd: fileInfo.filePath },
       (error, stdout, stderr) => {
-        handleErrorMessage(stderr);
+        handleErrorMessage(error, stdout, stderr);
       },
     );
 
     try {
       await waitOn({ resources: [`http://localhost:${portNumber}`] });
       view.webContents.loadURL(`http://localhost:${portNumber}`);
-      await waitOn({ resources: [`${os.homedir()}/Downloads/data.json`] });
+      await waitOn({ resources: [`${userHomeDir}/Downloads/data.json`] });
     } catch (error) {
       console.error(error);
     }
 
     const readfile = fs.readFileSync(
-      path.join(`${os.homedir()}/Downloads/data.json`),
+      path.join(`${userHomeDir}/Downloads/data.json`),
     );
     const fiberFile = JSON.parse(readfile);
 
