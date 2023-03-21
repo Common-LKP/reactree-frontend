@@ -35,10 +35,10 @@ const registerIpcHandlers = () => {
     view.setBounds({
       x: 8,
       y: 164,
-      width: 458,
-      height: 724,
+      width: 740,
+      height: 740,
     });
-
+    view.setAutoResize({ width: true, height: true });
     view.webContents.loadFile(path.join(__dirname, "../views/loading.html"));
 
     exec(

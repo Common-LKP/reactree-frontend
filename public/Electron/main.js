@@ -9,12 +9,11 @@ const createWindow = () => {
   const win = new BrowserWindow({
     width: SIZE.WINDOW_WIDTH,
     height: SIZE.WINDOW_HEIGHT,
-    resizable: false,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
   });
-
+  win.setMinimumSize(1100, 850);
   win.loadURL("http://localhost:3002");
 };
 
