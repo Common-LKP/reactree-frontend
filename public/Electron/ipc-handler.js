@@ -44,12 +44,13 @@ const registerIpcHandlers = () => {
     const view = new BrowserView();
     win.setBrowserView(view);
     view.setBounds({
-      x: 20,
-      y: 184,
-      width: 480,
-      height: 672,
+      x: 8,
+      y: 164,
+      width: 740,
+      height: 740,
     });
-    view.setBackgroundColor("#ffffff");
+    view.setAutoResize({ width: true, height: true });
+    view.webContents.loadFile(path.join(__dirname, "../views/loading.html"));
 
     exec(
       `PORT=${portNumber} BROWSER=none npm start`,
