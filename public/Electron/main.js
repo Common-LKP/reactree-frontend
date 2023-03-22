@@ -3,17 +3,17 @@ const path = require("path");
 
 const { quitApplication } = require("./utils");
 const { registerIpcHandlers } = require("./ipc-handler");
+const { SIZE } = require("../../src/assets/constants");
 
 const createWindow = () => {
   const win = new BrowserWindow({
-    width: 1040,
-    height: 900,
-    resizable: true,
+    width: SIZE.WINDOW_WIDTH,
+    height: SIZE.WINDOW_HEIGHT,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
   });
-
+  win.setMinimumSize(1100, 850);
   win.loadURL("http://localhost:3002");
 };
 

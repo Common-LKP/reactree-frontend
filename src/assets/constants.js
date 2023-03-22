@@ -7,9 +7,10 @@ const COLORS = {
 };
 
 const SIZE = {
-  MARGIN: "12px",
-  PADDING: "8px",
-  MARGIN_CENTER: "25px",
+  MARGIN: 12,
+  PADDING: 8,
+  WINDOW_WIDTH: 1500,
+  WINDOW_HEIGHT: 920,
 };
 
 exports.COLORS = COLORS;
