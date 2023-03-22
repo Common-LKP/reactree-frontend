@@ -9,7 +9,8 @@
     "airbnb",
     "airbnb/hooks",
     "plugin:prettier/recommended",
-    "plugin:react/jsx-runtime"
+    "plugin:react/jsx-runtime",
+    "plugin:jest/recommended"
   ],
   "rules": {
     "react/jsx-filename-extension": [

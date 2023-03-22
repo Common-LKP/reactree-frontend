@@ -98,7 +98,7 @@ const Main = styled.main`
 
 function App() {
   const dispatch = useDispatch();
-  const { hasPath, directoryPath } = useSelector(state => state.path);
+  const { directoryPath } = useSelector(state => state.path);
   const { layoutWidth, layoutHeight } = useSelector(state => state.d3tree);
   const ref = useRef(null);
   let pathEllips = directoryPath || "폴더 선택";
@@ -106,7 +106,7 @@ function App() {
   useEffect(() => {
     window.electronAPI.sendFilePath((event, path) => {
       dispatch(pathActions.setDirectoryPath({ path }));
-      
+
       return path ? dispatch(pathActions.checkPath()) : null;
     });
   }, [directoryPath, dispatch]);
