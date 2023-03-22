@@ -98,15 +98,15 @@ const Main = styled.main`
 
 function App() {
   const dispatch = useDispatch();
-  const { directoryPath } = useSelector(state => state.path);
-  const { widthSpacing, heightSpacing, layoutWidth, layoutHeight } =
-    useSelector(state => state.d3tree);
+  const { hasPath, directoryPath } = useSelector(state => state.path);
+  const { layoutWidth, layoutHeight } = useSelector(state => state.d3tree);
   const ref = useRef(null);
   let pathEllips = directoryPath || "폴더 선택";
 
   useEffect(() => {
     window.electronAPI.sendFilePath((event, path) => {
       dispatch(pathActions.setDirectoryPath({ path }));
+      
       return path ? dispatch(pathActions.checkPath()) : null;
     });
   }, [directoryPath, dispatch]);
@@ -134,15 +134,6 @@ function App() {
 
     return () => window.addEventListener("resize", handleWindow);
   }, [layoutWidth, layoutHeight, dispatch]);
-
-  const handleSize = event => {
-    if (event.target.name === "width") {
-      dispatch(d3treeActions.setWidthSpacing({ width: event.target.value }));
-    }
-    if (event.target.name === "height") {
-      dispatch(d3treeActions.setHeightSpacing({ height: event.target.value }));
-    }
-  };
 
   if (directoryPath) {
     pathEllips =
@@ -177,11 +168,9 @@ function App() {
               id="sliderX"
               type="range"
               className="rangeBar"
-              min="0"
-              max="300"
+              min="10"
+              max="600"
               name="width"
-              value={widthSpacing}
-              onInput={handleSize}
             />
           </div>
           <div>
@@ -190,11 +179,9 @@ function App() {
               id="sliderY"
               type="range"
               className="rangeBar"
-              min="0"
+              min="50"
               max="500"
               name="height"
-              value={heightSpacing}
-              onInput={handleSize}
             />
           </div>
         </div>

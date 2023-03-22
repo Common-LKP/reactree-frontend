@@ -54,8 +54,6 @@ export default function D3Tree() {
       label: d => d.name,
       width: layoutWidth,
       height: layoutHeight,
-      dxWidth: null,
-      dyHeight: null,
     });
 
     if (svg.current.firstChild) svg.current.removeChild(svg.current.firstChild);
