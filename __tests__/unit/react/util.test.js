@@ -1,12 +1,14 @@
 import deepCopy from "../../../src/utils/deepCopy";
 import getTreeSVG from "../../../src/utils/getTreeSVG";
 import Node from "../../../src/utils/Node";
+import createNode from "../../../src/utils/reactFiberTree";
+import mockFiberNode from "../../../src/assets/mockFiberNode.json";
 
 describe("deeCopy", () => {
   it("null을 입력하면 빈 객체를 반환합니다.", () => {
     const result = deepCopy(null);
 
-    expect(typeof result).toBe("object");
+    expect(result).toBeInstanceOf(Object);
     expect(result).toEqual({});
   });
 
@@ -57,11 +59,11 @@ describe("Node", () => {
   });
 
   it("Node 생성자 함수로 객체를 생성합니다.", () => {
-    expect(typeof node).toBe("object");
+    expect(node).toBeInstanceOf(Object);
     expect(node.name).toBe("");
     expect(node.props).toEqual([]);
     expect(node.state).toEqual([]);
-    expect(typeof node.uuid).toBe("string");
+    expect(node.uuid).toEqual(expect.any(String));
     expect(node.children).toEqual([]);
   });
 
@@ -133,5 +135,35 @@ describe("Node", () => {
     };
     node.addState(node0);
     expect(node.state).toEqual(["state1", "state2"]);
+  });
+});
+
+describe("createNode", () => {
+  let node;
+
+  beforeEach(() => {
+    node = new Node();
+  });
+
+  it("함수 첫번째 인자가 null일 때, 두번째 인자의 내부 속성 및 속성값은 변하지 않습니다.", () => {
+    createNode(null, node);
+    expect(node).toEqual(node);
+
+    createNode({}, node);
+    expect(node).toEqual(node);
+  });
+
+  it("첫번째 인자에 유효한 fiberNode를 입력하면 node가 유효한 트리 객체가 됩니다.", () => {
+    createNode(mockFiberNode, node);
+    const expectedTree = {
+      name: expect.any(String),
+      props: expect.any(Array),
+      state: expect.any(Array),
+      uuid: expect.any(String),
+      children: expect.any(Array),
+    };
+
+    expect(node).toBeInstanceOf(Object);
+    expect(node).toMatchObject(expectedTree);
   });
 });
