@@ -3,6 +3,8 @@ import getTreeSVG from "../../../src/utils/getTreeSVG";
 import Node from "../../../src/utils/Node";
 import createNode from "../../../src/utils/reactFiberTree";
 import mockFiberNode from "../../../src/assets/mockFiberNode.json";
+import reactree from "../../../src/utils/reactree";
+import { JSDOM } from "jsdom";
 
 describe("deeCopy", () => {
   it("null을 입력하면 빈 객체를 반환합니다.", () => {
@@ -165,5 +167,55 @@ describe("createNode", () => {
 
     expect(node).toBeInstanceOf(Object);
     expect(node).toMatchObject(expectedTree);
+  });
+});
+
+describe("reactree", () => {
+  it("함수의 반환값은 항상 undefined 입니다.", () => {
+    expect(reactree()).toBe(undefined);
+    expect(reactree({})).toBe(undefined);
+    expect(reactree({ a: 1 })).toBe(undefined);
+  });
+
+  it("유효하지 않은 값을 입력하면 console.error()가 실행됩니다.", () => {
+    const consoleErrorSpy = jest.spyOn(console, "error");
+    const invalidRoot = {};
+    reactree(invalidRoot);
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(expect.any(Error));
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  it("유효한 값을 입력하면 json파일을 다운로드 받는 로직을 실행합니다.", () => {
+    const jsdom = new JSDOM("<!doctype html><html><body></body></html>");
+    global.document = jsdom.window.document;
+
+    const createElementSpy = jest
+      .spyOn(document, "createElement")
+      .mockReturnValueOnce({
+        href: "",
+        download: "",
+        click: jest.fn(),
+      });
+    const stringifySpy = jest.spyOn(JSON, "stringify");
+
+    reactree({ current: {} });
+
+    expect(stringifySpy).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.any(Function),
+    );
+    const mockFiberJson = stringifySpy.mock.results[0].value;
+    expect(createElementSpy).toHaveBeenCalledWith("a");
+    expect(createElementSpy.mock.results[0].value.href).toBe(
+      `data:text/json;charset=utf-8,${mockFiberJson}`,
+    );
+    expect(createElementSpy.mock.results[0].value.download).toBe("data.json");
+    expect(createElementSpy.mock.results[0].value.click).toHaveBeenCalled();
+
+    createElementSpy.mockRestore();
+    stringifySpy.mockRestore();
+    jsdom.window.close();
   });
 });
