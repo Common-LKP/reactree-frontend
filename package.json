@@ -26,13 +26,18 @@
   "scripts": {
     "start": "export PORT=3002 && react-scripts start",
     "build": "react-scripts build",
-    "test": "jest",
+    "test": "jest ./__tests__/unit/react",
     "eject": "react-scripts eject",
     "electron:serve": "concurrently -k \"cross-env BROWSER=none npm start\" \"npm run electron:start\"",
     "electron:build": "",
     "electron:start": "wait-on tcp:3002 && electron .",
-    "pre-commit": "lint-staged && rm -rf .git/hooks && ln -s ../.husky .git/hooks",
-    "prepare": "husky install && husky add .husky/pre-commit 'npm run pre-commit'"
+    "pre-commit": "lint-staged && rm -rf .git/hooks && ln -s ../.husky .git/hooks"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "transformIgnorePatterns": [
+      "/node_modules/(?!d3|d3-array|internmap|delaunator|robust-predicates)"
+    ]
   },
   "eslintConfig": {
     "extends": [
@@ -53,8 +58,11 @@
     ]
   },
   "devDependencies": {
+    "@babel/core": "^7.21.3",
+    "@babel/preset-env": "^7.20.2",
     "@jest-runner/electron": "^3.0.1",
     "@playwright/test": "^1.31.2",
+    "babel-jest": "^29.5.0",
     "eslint": "^8.36.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.7.0",

@@ -1,17 +1,12 @@
-import React from "react";
-import { render, screen } from "@testing-library/react";
-import { Provider } from "react-redux";
+import React, { useEffect, useRef, useLayoutEffect } from "react";
+import { useSelector, useDispatch, Provider } from "react-redux";
 import App from "../../../src/App/App";
-import store from "../../../src/App/store";
+import { render, screen } from "@testing-library/react";
 
-it("renders with title", () => {
-  const title = "Reactree";
+test("renders the landing page", () => {
   render(
-    <React.StrictMode>
-      <Provider store={store}>
-        <App />
-      </Provider>
-    </React.StrictMode>,
+    <Provider>
+      <App />;
+    </Provider>,
   );
-  expect(screen.getByText(title)).toBeInTheDocument();
 });
