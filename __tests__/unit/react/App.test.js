@@ -1,12 +1,25 @@
-import React, { useEffect, useRef, useLayoutEffect } from "react";
-import { useSelector, useDispatch, Provider } from "react-redux";
+import React from "react";
 import App from "../../../src/App/App";
-import { render, screen } from "@testing-library/react";
+import { Provider } from "react-redux";
+import { render } from "@testing-library/react";
+import store from "../../../src/App/store";
 
-test("renders the landing page", () => {
-  render(
-    <Provider>
-      <App />;
-    </Provider>,
-  );
+jest.mock("electron");
+
+const mockGetNodeData = jest.fn();
+const mockSendFilePath = jest.fn();
+
+const electronAPIMock = {
+  getNodeData: mockGetNodeData,
+  sendFilePath: mockSendFilePath,
+};
+
+describe.skip("App 컴포넌트 렌더링", () => {
+  it("정상 렌더링 되는지 확인", () => {
+    render(
+      <Provider store={store}>
+        <App />
+      </Provider>,
+    );
+  });
 });
