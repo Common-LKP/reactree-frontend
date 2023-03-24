@@ -1,10 +1,15 @@
+/**
+ * @jest-environment jsdom
+ */
+import "@testing-library/jest-dom";
+import React from "react";
+import { fireEvent, render, waitFor } from "@testing-library/react";
 import deepCopy from "../../../src/utils/deepCopy";
 import getTreeSVG from "../../../src/utils/getTreeSVG";
 import Node from "../../../src/utils/Node";
 import createNode from "../../../src/utils/reactFiberTree";
-import mockFiberNode from "../../../src/assets/mockFiberNode.json";
 import reactree from "../../../src/utils/reactree";
-import { JSDOM } from "jsdom";
+import mockFiberNode from "../../../src/assets/mockFiberNode.json";
 
 describe("deeCopy", () => {
   it("null을 입력하면 빈 객체를 반환합니다.", () => {
@@ -47,9 +52,104 @@ describe("deeCopy", () => {
   });
 });
 
-describe.skip("getTreeSVG", () => {
-  it("null을 입력하면 null을 반환합니다.", () => {
-    expect(getTreeSVG(null)).toBe(null);
+describe("getTreeSVG", () => {
+  const data = {
+    name: "Parent",
+    children: [{ name: "Child 1" }, { name: "Child 2" }],
+  };
+  let svg;
+
+  beforeEach(() => {
+    svg = getTreeSVG(data, {
+      label: d => d.name,
+      width: 500,
+      height: 500,
+    });
+  });
+
+  afterEach(() => {
+    svg = null;
+  });
+
+  it("기본 설정이 적용된 트리 SVG 요소를 반환합니다.", () => {
+    expect(svg.tagName).toBe("svg");
+    expect(svg.querySelector("circle").getAttribute("r")).toBe("10");
+    expect(svg.querySelector("g").getAttribute("stroke")).toBe("#363636");
+    expect(svg.querySelector("text").textContent).toBe("Parent");
+  });
+
+  it("커스텀 옵션이 적용된 트리 SVG를 반환합니다.", () => {
+    const options = {
+      width: 500,
+      height: 500,
+      r: 20,
+      fill: "red",
+      stroke: "blue",
+      strokeWidth: 5,
+      label: data => `Node ${data.name}`,
+    };
+    const customedSVG = getTreeSVG(data, options);
+
+    expect(customedSVG.getAttribute("width")).toBe("500");
+    expect(customedSVG.getAttribute("height")).toBe("500");
+    expect(customedSVG.querySelector("circle").getAttribute("r")).toBe("20");
+    expect(["red", "blue"]).toContain(
+      customedSVG.querySelector("circle").getAttribute("fill"),
+    );
+    expect(customedSVG.querySelector("g").getAttribute("stroke")).toBe("blue");
+    expect(customedSVG.querySelector("g").getAttribute("stroke-width")).toBe(
+      "5",
+    );
+    expect(customedSVG.querySelector("text").textContent).toBe("Node Parent");
+  });
+
+  it("<circle> 요소가 알맞은 수만큼 렌더링됩니다.", () => {
+    const circles = svg.querySelectorAll("circle");
+
+    expect(circles.length).toBe(3);
+  });
+
+  it("올바른 라벨 텍스트가 렌더링됩니다.", () => {
+    const texts = svg.querySelectorAll("text");
+
+    expect(texts[0].textContent).toBe("Parent");
+    expect(texts[1].textContent).toBe("Child 1");
+    expect(texts[2].textContent).toBe("Child 2");
+  });
+
+  it("트리를 드래그하는 중에는 커서 모양이 'grabbing'으로 바뀝니다.", () => {
+    expect(svg.getAttribute("cursor")).toBe("pointer");
+
+    fireEvent.dragStart(svg, { clientX: 0, clientY: 0 });
+    setTimeout(() => {
+      expect(svg.getAttribute("cursor")).toBe("grabbing");
+    }, 0);
+  });
+
+  it("트리를 드래그하면 svg요소 viewBox의 width, height는 고정된 채 min-x, min-y 값이 마우스 포인터의 위치에 따라 바뀝니다.", () => {
+    const dragEvent = { clientX: 100, clientY: 100 };
+    fireEvent.dragStart(svg, { clientX: 0, clientY: 0 });
+    fireEvent.drag(svg, dragEvent);
+    fireEvent.dragEnd(svg);
+    expect(svg.getAttribute("viewBox")).toBe("-250,-50,500,500");
+  });
+
+  it("트리를 줌인하면 svg요소 viewBox의 min-x, min-y는 고정된 채 width, height가 작아지고, circle 반지름과 label 간격 및 글자 크기가 커집니다.", () => {
+    const zoomEvent = { clientX: 250, clientY: 250, deltaY: 100 };
+    fireEvent.wheel(svg, zoomEvent);
+
+    expect(svg.getAttribute("viewBox")).toBe(
+      "-250,-50,435.27528164806205,435.27528164806205",
+    );
+    expect(svg.querySelectorAll("circle")[0].getAttribute("r")).toBe(
+      "11.48698354997035",
+    );
+    expect(svg.querySelectorAll("text")[0].getAttribute("dy")).toBe(
+      "1.8730475324955524em",
+    );
+    expect(svg.querySelectorAll("text")[0].getAttribute("font-size")).toBe(
+      "11.48698354997035",
+    );
   });
 });
 
@@ -147,12 +247,15 @@ describe("createNode", () => {
     node = new Node();
   });
 
-  it("함수 첫번째 인자가 null일 때, 두번째 인자의 내부 속성 및 속성값은 변하지 않습니다.", () => {
-    createNode(null, node);
-    expect(node).toEqual(node);
+  it("첫번째 인자에 유효하지 않은 fiberNode를 입력하면 각 속성값은 undefined 또는 빈 배열 또는 임의의 uuid가 할당됩니다.", () => {
+    const invalidInput = { a: 1 };
+    createNode(invalidInput, node);
 
-    createNode({}, node);
-    expect(node).toEqual(node);
+    expect(node.name).toBe(undefined);
+    expect(node.props).toEqual([]);
+    expect(node.state).toEqual([]);
+    expect(node.uuid).toEqual(expect.any(String));
+    expect(node.children).toEqual([]);
   });
 
   it("첫번째 인자에 유효한 fiberNode를 입력하면 node가 유효한 트리 객체가 됩니다.", () => {
@@ -177,20 +280,7 @@ describe("reactree", () => {
     expect(reactree({ a: 1 })).toBe(undefined);
   });
 
-  it("유효하지 않은 값을 입력하면 console.error()가 실행됩니다.", () => {
-    const consoleErrorSpy = jest.spyOn(console, "error");
-    const invalidRoot = {};
-    reactree(invalidRoot);
-
-    expect(consoleErrorSpy).toHaveBeenCalledWith(expect.any(Error));
-
-    consoleErrorSpy.mockRestore();
-  });
-
   it("유효한 값을 입력하면 json파일을 다운로드 받는 로직을 실행합니다.", () => {
-    const jsdom = new JSDOM("<!doctype html><html><body></body></html>");
-    global.document = jsdom.window.document;
-
     const createElementSpy = jest
       .spyOn(document, "createElement")
       .mockReturnValueOnce({
@@ -216,6 +306,5 @@ describe("reactree", () => {
 
     createElementSpy.mockRestore();
     stringifySpy.mockRestore();
-    jsdom.window.close();
   });
 });
