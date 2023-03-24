@@ -23,7 +23,7 @@ const registerIpcHandlers = () => {
         exec(
           `ln -s ${reactreePath}/Desktop/reactree-frontend/src/utils/reactree.js ${filePaths}/src/Symlink.js`,
           (error, stdout, stderr) => {
-            handleErrorMessage(error, stdout, stderr);
+            handleErrorMessage(stderr);
           },
         );
 
@@ -33,7 +33,7 @@ const registerIpcHandlers = () => {
         );
       }
 
-      return null;
+      return fileInfo.filePath;
     } catch (error) {
       return console.error(error);
     }
@@ -50,13 +50,14 @@ const registerIpcHandlers = () => {
       height: 740,
     });
     view.setAutoResize({ width: true, height: true });
+    view.setBackgroundColor("white");
     view.webContents.loadFile(path.join(__dirname, "../views/loading.html"));
 
     exec(
       `PORT=${portNumber} BROWSER=none npm start`,
       { cwd: fileInfo.filePath },
       (error, stdout, stderr) => {
-        handleErrorMessage(error, stdout, stderr);
+        handleErrorMessage(stderr);
       },
     );
 
@@ -74,6 +75,7 @@ const registerIpcHandlers = () => {
     const fiberFile = JSON.parse(readfile);
 
     win.webContents.send("get-node-data", fiberFile);
+    return fiberFile;
   });
 };
 

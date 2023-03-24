@@ -47,7 +47,7 @@ const quitApplication = () => {
   }
 };
 
-const handleErrorMessage = (error, stdout, sdterr) => {
+const handleErrorMessage = sdterr => {
   const lines = sdterr.split(os.EOL);
   let detail;
 
@@ -84,6 +84,7 @@ const handleErrorMessage = (error, stdout, sdterr) => {
 module.exports = {
   fileInfo,
   portNumber,
+  checkPortNumber,
   quitApplication,
   handleErrorMessage,
 };
