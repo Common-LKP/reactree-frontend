@@ -24,7 +24,8 @@
   "scripts": {
     "start": "export PORT=3002 && react-scripts start",
     "build": "react-scripts build",
-    "test": "jest ./__tests__/unit/react",
+    "test": "jest ./__tests__/unit",
+    "test-react": "jest ./__tests__/unit/react",
     "eject": "react-scripts eject",
     "electron:serve": "concurrently -k \"cross-env BROWSER=none npm start\" \"npm run electron:start\"",
     "electron:build": "",
