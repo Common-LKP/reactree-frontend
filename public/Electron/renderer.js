@@ -24,15 +24,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 });
 
-document.addEventListener("DOMContentLoaded", async () => {
-  const inputElement = await getElementByIdAsync("npmStartButton");
-  inputElement.addEventListener("click", async () => {
-    try {
-      await window.electronAPI.commandData();
-    } catch (error) {
-      console.error(error);
-    }
-  });
-});
+// document.addEventListener("DOMContentLoaded", async () => {
+//   const inputElement = await getElementByIdAsync("npmStartButton");
+//   inputElement.addEventListener("click", async () => {
+//     try {
+//       await window.electronAPI.commandData();
+//     } catch (error) {
+//       console.error(error);
+//     }
+//   });
+// });
 
 exports.getElementByIdAsync = getElementByIdAsync;
