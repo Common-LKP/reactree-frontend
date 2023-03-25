@@ -33,20 +33,10 @@ const d3Pkgs = [
 ];
 
 module.exports = {
-  transformIgnorePatterns: [
-    `/node_modules/(?!${d3Pkgs.join(
-      "|",
-    )}|internmap|d3-delaunay|delaunator|robust-predicates)`,
-  ],
   moduleNameMapper: {
     d3: "/node_modules/d3/dist/d3.min.js",
   },
   projects: [
-    {
-      runner: "@jest-runner/electron/main",
-      testEnvironment: "node",
-      testMatch: ["../__tests__/unit/electron/main.test.js"],
-    },
     {
       runner: "@jest-runner/electron",
       testEnvironment: "@jest-runner/electron/environment",

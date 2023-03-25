@@ -178,6 +178,7 @@ function App() {
               min="10"
               max="600"
               name="width"
+              aria-label="width"
             />
           </div>
           <div>
@@ -189,6 +190,7 @@ function App() {
               min="50"
               max="500"
               name="height"
+              aria-label="height"
             />
           </div>
         </div>

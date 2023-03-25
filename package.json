@@ -6,9 +6,7 @@
   "dependencies": {
     "@electron/remote": "^2.0.9",
     "@reduxjs/toolkit": "^1.9.3",
-    "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
     "concurrently": "^7.6.0",
     "cross-env": "^7.0.3",
     "d3": "^7.8.2",
@@ -27,7 +25,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "test-react-util": "jest ./__tests__/unit",
+    "test-react": "jest ./__tests__/unit",
     "eject": "react-scripts eject",
     "electron:serve": "concurrently -k \"cross-env PORT=3002 BROWSER=none npm start\" \"npm run electron:start\"",
     "electron:build": "",
@@ -35,6 +33,7 @@
     "pre-commit": "lint-staged && rm -rf .git/hooks && ln -s ../.husky .git/hooks"
   },
   "jest": {
+    "testEnvironment": "jsdom",
     "transformIgnorePatterns": [
       "/node_modules/(?!d3|d3-array|internmap|delaunator|robust-predicates)"
     ]
@@ -58,6 +57,11 @@
     ]
   },
   "devDependencies": {
+    "@babel/core": "^7.21.3",
+    "@babel/preset-env": "^7.20.2",
+    "@jest-runner/electron": "^3.0.1",
+    "@testing-library/jest-dom": "^5.16.5",
+    "babel-jest": "^29.5.0",
     "@playwright/test": "^1.31.2",
     "electron-playwright-helpers": "^1.5.4",
     "eslint": "^8.36.0",
