@@ -152,11 +152,18 @@ function App() {
         <div className="buttonSection">
           <div className="buttonBar">
             <p>프로젝트의 폴더를 선택해주세요.</p>
-            <Button id="directoryButton">{pathEllips}</Button>
+            <Button id="directoryButton" data-testid="path">
+              {pathEllips}
+            </Button>
           </div>
           <div className="buttonBar">
             <p>시작 버튼을 눌러주세요.</p>
-            <Button id="npmStartButton" type="text" disabled={!directoryPath}>
+            <Button
+              id="npmStartButton"
+              type="text"
+              disabled={!directoryPath}
+              data-testid="start"
+            >
               npm start
             </Button>
           </div>

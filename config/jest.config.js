@@ -45,12 +45,12 @@ module.exports = {
     {
       runner: "@jest-runner/electron/main",
       testEnvironment: "node",
-      testMatch: ["./__tests__/main.test.js"],
+      testMatch: ["../__tests__/unit/electron/main.test.js"],
     },
     {
       runner: "@jest-runner/electron",
       testEnvironment: "@jest-runner/electron/environment",
-      testMatch: ["./__tests__/renderer.test.js"],
+      testMatch: ["../__tests__/unit/electron/renderer.test.js"],
     },
   ],
 };

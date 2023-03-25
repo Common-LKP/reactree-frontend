@@ -24,12 +24,12 @@
     "wait-on": "^7.0.1"
   },
   "scripts": {
-    "start": "export PORT=3002 && react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "jest ./__tests__/unit",
-    "test-react-util": "jest ./__tests__/unit/react/util.test.js",
+    "test": "react-scripts test",
+    "test-react-util": "jest ./__tests__/unit",
     "eject": "react-scripts eject",
-    "electron:serve": "concurrently -k \"cross-env BROWSER=none npm start\" \"npm run electron:start\"",
+    "electron:serve": "concurrently -k \"cross-env PORT=3002 BROWSER=none npm start\" \"npm run electron:start\"",
     "electron:build": "",
     "electron:start": "wait-on tcp:3002 && electron .",
     "pre-commit": "lint-staged && rm -rf .git/hooks && ln -s ../.husky .git/hooks"
@@ -58,8 +58,8 @@
     ]
   },
   "devDependencies": {
-    "@jest-runner/electron": "^3.0.1",
     "@playwright/test": "^1.31.2",
+    "electron-playwright-helpers": "^1.5.4",
     "eslint": "^8.36.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.7.0",
