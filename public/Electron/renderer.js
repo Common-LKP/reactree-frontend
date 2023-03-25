@@ -34,3 +34,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 });
+
+exports.getElementByIdAsync = getElementByIdAsync;
