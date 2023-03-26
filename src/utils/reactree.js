@@ -6,6 +6,9 @@ const getCircularReplacer = (key, value) => {
   if (key === "elementType" && typeof value === "function")
     return { name: value.name };
 
+  if (key === "memoizedProps" && typeof value === "object" && value)
+    return value;
+
   if (typeof value === "object" && value !== null) {
     if (seen.has(value)) return undefined;
 

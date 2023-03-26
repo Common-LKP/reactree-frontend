@@ -17,10 +17,9 @@ const registerIpcHandlers = () => {
       if (canceled) return new Error("open dialog failed");
 
       const filePath = filePaths[0];
-      const userHomeDir = os.homedir();
-      const homeDirectory = path.join(userHomeDir);
+      const userHomeDirectory = os.homedir();
       exec(
-        `ln -s ${homeDirectory}/Desktop/reactree-frontend/src/utils/reactree.js ${filePath}/src/reactree-symlink.js`,
+        `ln -s ${userHomeDirectory}/Desktop/reactree-frontend/src/utils/reactree.js ${filePath}/src/reactree-symlink.js`,
         (error, stdout, stderr) => {
           handleErrorMessage(stderr);
         },
@@ -74,7 +73,7 @@ const registerIpcHandlers = () => {
       await waitOn({ resources: [`http://localhost:${portNumber}`] });
       view.webContents.loadURL(`http://localhost:${portNumber}`);
 
-      await waitOn({ resources: [`${userHomeDir}/Downloads/data.json`] });
+      await waitOn({ resources: [`${userHomeDirectory}/Downloads/data.json`] });
 
       writeFileSync(`${filePath}/src/index.js`, originalUserIndexJScodes, {
         encoding: "utf8",
@@ -84,7 +83,7 @@ const registerIpcHandlers = () => {
       exec(`rm ${filePath}/src/reactree-symlink.js`);
 
       const fiberFile = readFileSync(
-        path.join(`${userHomeDir}/Downloads/data.json`),
+        path.join(`${userHomeDirectory}/Downloads/data.json`),
       );
       exec("rm data.json", { cwd: `${os.homedir()}/Downloads` });
 
