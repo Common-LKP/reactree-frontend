@@ -12,6 +12,8 @@ function Node() {
 const pushState = function (memoizedState, stateArray) {
   if (!memoizedState) return;
 
+  if (typeof memoizedState.memoizedState === "object") return;
+
   stateArray.push(memoizedState.memoizedState);
   pushState(memoizedState.next, stateArray);
 };
@@ -52,6 +54,7 @@ Node.prototype.addState = function (node) {
   if (!node.memoizedState) return;
 
   if (node.tag === 0 || node.tag === 1) {
+    this.state.push(node.tag);
     pushState(node.memoizedState, this.state);
   }
 };
