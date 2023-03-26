@@ -3,12 +3,9 @@ const { exec, execSync } = require("child_process");
 const path = require("path");
 const waitOn = require("wait-on");
 const os = require("os");
-const { readFileSync } = require("fs");
-const { appendFile, readFile, writeFile } = require("fs/promises");
+const { readFileSync, writeFileSync, appendFileSync } = require("fs");
 
-const { fileInfo, portNumber, handleErrorMessage } = require("./utils");
-
-const userHomeDir = os.homedir();
+const { handleErrorMessage, portNumber } = require("./utils");
 
 const registerIpcHandlers = () => {
   ipcMain.handle("get-path", async () => {
@@ -19,18 +16,18 @@ const registerIpcHandlers = () => {
 
       if (canceled) return new Error("open dialog failed");
 
-      [fileInfo.filePath] = filePaths;
-
+      const filePath = filePaths[0];
+      const userHomeDir = os.homedir();
       const homeDirectory = path.join(userHomeDir);
       exec(
-        `ln -s ${homeDirectory}/Desktop/reactree-frontend/src/utils/reactree.js ${filePaths}/src/reactree-symlink.js`,
+        `ln -s ${homeDirectory}/Desktop/reactree-frontend/src/utils/reactree.js ${filePath}/src/reactree-symlink.js`,
         (error, stdout, stderr) => {
           handleErrorMessage(stderr);
         },
       );
 
-      const originalUserIndexJScodes = await readFile(
-        `${filePaths}/src/index.js`,
+      const originalUserIndexJScodes = readFileSync(
+        `${filePath}/src/index.js`,
         {
           encoding: "utf8",
         },
@@ -45,10 +42,10 @@ const registerIpcHandlers = () => {
         }, 0);
       `;
 
-      await appendFile(`${filePaths}/src/index.js`, JScodes);
+      appendFileSync(`${filePath}/src/index.js`, JScodes);
 
       const mainWindow = BrowserWindow.getFocusedWindow();
-      mainWindow.webContents.send("send-file-path", fileInfo.filePath);
+      mainWindow.webContents.send("send-file-path", filePath);
 
       const view = new BrowserView();
       mainWindow.setBrowserView(view);
@@ -62,42 +59,38 @@ const registerIpcHandlers = () => {
       view.setBackgroundColor("white");
       view.webContents.loadFile(path.join(__dirname, "../views/loading.html"));
 
-      const previousPortNumber = 3000;
       execSync(
-        `lsof -i :${previousPortNumber} | grep LISTEN | awk '{print $2}' | xargs kill`,
+        `lsof -i :${portNumber} | grep LISTEN | awk '{print $2}' | xargs kill`,
       );
+
       exec(
         `PORT=${portNumber} BROWSER=none npm start`,
-        { cwd: fileInfo.filePath },
+        { cwd: filePath },
         (error, stdout, stderr) => {
           handleErrorMessage(stderr);
         },
       );
 
-      try {
-        await waitOn({ resources: [`http://localhost:${portNumber}`] });
-        view.webContents.loadURL(`http://localhost:${portNumber}`);
-        await waitOn({ resources: [`${userHomeDir}/Downloads/data.json`] });
-      } catch (error) {
-        console.error(error);
-      }
+      await waitOn({ resources: [`http://localhost:${portNumber}`] });
+      view.webContents.loadURL(`http://localhost:${portNumber}`);
 
-      const fiberFile = readFileSync(
-        path.join(`${userHomeDir}/Downloads/data.json`),
-      );
+      await waitOn({ resources: [`${userHomeDir}/Downloads/data.json`] });
 
-      mainWindow.webContents.send("get-node-data", JSON.parse(fiberFile));
-
-      exec("rm data.json", { cwd: `${os.homedir()}/Downloads` });
-
-      await writeFile(`${filePaths}/src/index.js`, originalUserIndexJScodes, {
+      writeFileSync(`${filePath}/src/index.js`, originalUserIndexJScodes, {
         encoding: "utf8",
         flag: "w",
       });
 
-      exec(`rm ${filePaths}/src/reactree-symlink.js`);
+      exec(`rm ${filePath}/src/reactree-symlink.js`);
 
-      return fileInfo.filePath;
+      const fiberFile = readFileSync(
+        path.join(`${userHomeDir}/Downloads/data.json`),
+      );
+      exec("rm data.json", { cwd: `${os.homedir()}/Downloads` });
+
+      mainWindow.webContents.send("get-node-data", JSON.parse(fiberFile));
+
+      return filePath;
     } catch (error) {
       return console.error(error);
     }
