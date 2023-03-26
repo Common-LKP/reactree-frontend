@@ -15,9 +15,9 @@ const getCircularReplacer = (key, value) => {
   return value;
 };
 
-const reactree = root => {
+const reactree = rootInternalRoot => {
   try {
-    const fiber = deepCopy(root);
+    const fiber = deepCopy(rootInternalRoot);
     const fiberJson = JSON.stringify(fiber.current, getCircularReplacer);
     const link = document.createElement("a");
     const jsonString = `data:text/json;charset=utf-8,${fiberJson}`;

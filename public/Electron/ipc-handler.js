@@ -1,9 +1,10 @@
 const { ipcMain, BrowserWindow, BrowserView, dialog } = require("electron");
-const { exec } = require("child_process");
+const { exec, execSync } = require("child_process");
 const path = require("path");
 const waitOn = require("wait-on");
 const os = require("os");
-const fs = require("fs");
+const { readFileSync } = require("fs");
+const { appendFile, readFile, writeFile } = require("fs/promises");
 
 const { fileInfo, portNumber, handleErrorMessage } = require("./utils");
 
@@ -22,11 +23,29 @@ const registerIpcHandlers = () => {
 
       const homeDirectory = path.join(userHomeDir);
       exec(
-        `ln -s ${homeDirectory}/Desktop/reactree-frontend/src/utils/reactree.js ${filePaths}/src/Symlink-reactree.js`,
+        `ln -s ${homeDirectory}/Desktop/reactree-frontend/src/utils/reactree.js ${filePaths}/src/reactree-symlink.js`,
         (error, stdout, stderr) => {
           handleErrorMessage(stderr);
         },
       );
+
+      const originalUserIndexJScodes = await readFile(
+        `${filePaths}/src/index.js`,
+        {
+          encoding: "utf8",
+        },
+      );
+
+      const JScodes = `
+        // eslint-disable-next-line import/first
+        import reactree from "./reactree-symlink";
+
+        setTimeout(() => {
+          reactree(root._internalRoot);
+        }, 0);
+      `;
+
+      await appendFile(`${filePaths}/src/index.js`, JScodes);
 
       const mainWindow = BrowserWindow.getFocusedWindow();
       mainWindow.webContents.send("send-file-path", fileInfo.filePath);
@@ -43,6 +62,10 @@ const registerIpcHandlers = () => {
       view.setBackgroundColor("white");
       view.webContents.loadFile(path.join(__dirname, "../views/loading.html"));
 
+      const previousPortNumber = 3000;
+      execSync(
+        `lsof -i :${previousPortNumber} | grep LISTEN | awk '{print $2}' | xargs kill`,
+      );
       exec(
         `PORT=${portNumber} BROWSER=none npm start`,
         { cwd: fileInfo.filePath },
@@ -59,11 +82,20 @@ const registerIpcHandlers = () => {
         console.error(error);
       }
 
-      const fiberFile = fs.readFileSync(
+      const fiberFile = readFileSync(
         path.join(`${userHomeDir}/Downloads/data.json`),
       );
 
       mainWindow.webContents.send("get-node-data", JSON.parse(fiberFile));
+
+      exec("rm data.json", { cwd: `${os.homedir()}/Downloads` });
+
+      await writeFile(`${filePaths}/src/index.js`, originalUserIndexJScodes, {
+        encoding: "utf8",
+        flag: "w",
+      });
+
+      exec(`rm ${filePaths}/src/reactree-symlink.js`);
 
       return fileInfo.filePath;
     } catch (error) {
