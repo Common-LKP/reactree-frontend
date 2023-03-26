@@ -96,6 +96,12 @@ const Main = styled.main`
   }
 `;
 
+const Description = styled.div`
+  display: ${props => (props.hasPath ? "none" : "block")};
+  text-align: center;
+  align-items: center;
+`;
+
 function App() {
   const dispatch = useDispatch();
   const { directoryPath } = useSelector(state => state.path);
@@ -181,6 +187,11 @@ function App() {
               aria-label="width"
             />
           </div>
+          <Description hasPath={directoryPath}>
+            폴더 경로를 선택하면 아래 예시와 같이
+            <br />
+            트리구조가 렌더링 됩니다.
+          </Description>
           <div>
             <div className="title">HEIGHT</div>
             <input
