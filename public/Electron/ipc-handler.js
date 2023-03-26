@@ -24,10 +24,14 @@ const registerIpcHandlers = () => {
           `ln -s ${reactreePath}/Desktop/reactree-frontend/src/utils/reactree.js ${filePaths}/src/Symlink.js`,
           (error, stdout, stderr) => {
             const pathError = handleErrorMessage(stderr);
-            if (pathError) createErrorDialog(pathError);
+
+            if (pathError) {
+              createErrorDialog(pathError);
+            }
           },
         );
 
+        await waitOn({ resources: [`${filePaths}/src/Symlink.js`] });
         BrowserWindow.getFocusedWindow().webContents.send(
           "send-file-path",
           fileInfo.filePath,
@@ -36,7 +40,7 @@ const registerIpcHandlers = () => {
 
       return fileInfo.filePath;
     } catch (error) {
-      return createErrorDialog(error);
+      return undefined;
     }
   });
 
@@ -59,6 +63,7 @@ const registerIpcHandlers = () => {
       { cwd: fileInfo.filePath },
       (error, stdout, stderr) => {
         const portError = handleErrorMessage(stderr);
+
         if (portError) {
           view.webContents.loadFile(
             path.join(__dirname, "../views/errorPage.html"),
