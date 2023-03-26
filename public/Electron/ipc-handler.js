@@ -5,10 +5,10 @@ const waitOn = require("wait-on");
 const os = require("os");
 const fs = require("fs");
 
-const userHomeDir = os.homedir();
-
 const { fileInfo, portNumber, handleErrorMessage } = require("./utils");
+const { createErrorDialog } = require("./dialog");
 
+const userHomeDir = os.homedir();
 const registerIpcHandlers = () => {
   ipcMain.handle("get-path", async () => {
     try {
@@ -23,7 +23,8 @@ const registerIpcHandlers = () => {
         exec(
           `ln -s ${reactreePath}/Desktop/reactree-frontend/src/utils/reactree.js ${filePaths}/src/Symlink.js`,
           (error, stdout, stderr) => {
-            handleErrorMessage(stderr);
+            const pathError = handleErrorMessage(stderr);
+            if (pathError) createErrorDialog(pathError);
           },
         );
 
@@ -35,7 +36,7 @@ const registerIpcHandlers = () => {
 
       return fileInfo.filePath;
     } catch (error) {
-      return console.error(error);
+      return createErrorDialog(error);
     }
   });
 
@@ -57,7 +58,13 @@ const registerIpcHandlers = () => {
       `PORT=${portNumber} BROWSER=none npm start`,
       { cwd: fileInfo.filePath },
       (error, stdout, stderr) => {
-        handleErrorMessage(stderr);
+        const portError = handleErrorMessage(stderr);
+        if (portError) {
+          view.webContents.loadFile(
+            path.join(__dirname, "../views/errorPage.html"),
+          );
+          createErrorDialog(portError);
+        }
       },
     );
 
@@ -66,7 +73,12 @@ const registerIpcHandlers = () => {
       view.webContents.loadURL(`http://localhost:${portNumber}`);
       await waitOn({ resources: [`${userHomeDir}/Downloads/data.json`] });
     } catch (error) {
-      console.error(error);
+      view.webContents.loadFile(
+        path.join(__dirname, "../views/errorPage.html"),
+      );
+      createErrorDialog(
+        "서버 연결이 원활하지 않습니다. 잠시 후 다시 시도해주세요.",
+      );
     }
 
     const readfile = fs.readFileSync(
@@ -75,7 +87,6 @@ const registerIpcHandlers = () => {
     const fiberFile = JSON.parse(readfile);
 
     win.webContents.send("get-node-data", fiberFile);
-    return fiberFile;
   });
 };
 
