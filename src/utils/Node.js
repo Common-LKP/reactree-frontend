@@ -46,7 +46,7 @@ Node.prototype.addProps = function (node) {
   if (!node.memoizedProps) return;
 
   if (node.tag === 0 || node.tag === 1) {
-    this.props = Object.values(node.memoizedProps);
+    Object.values(node.memoizedProps).forEach(item => this.props.push(item));
   }
 };
 

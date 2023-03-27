@@ -2,10 +2,6 @@ const { app } = require("electron");
 const { execSync, exec } = require("child_process");
 const os = require("os");
 
-const fileInfo = {
-  filePath: null,
-};
-
 const checkPortNumber = () => {
   let defaultPort = 3000;
 
@@ -41,6 +37,7 @@ const quitApplication = () => {
     execSync(
       `lsof -i :${portNumber} | grep LISTEN | awk '{print $2}' | xargs kill`,
     );
+
     app.quit();
   } catch (error) {
     console.error("Failed to kill server process:", error);
@@ -75,9 +72,8 @@ const handleErrorMessage = sdterr => {
 };
 
 module.exports = {
-  fileInfo,
-  portNumber,
+  handleErrorMessage,
   checkPortNumber,
   quitApplication,
-  handleErrorMessage,
+  portNumber,
 };

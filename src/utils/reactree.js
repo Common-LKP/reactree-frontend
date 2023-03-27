@@ -6,6 +6,9 @@ const getCircularReplacer = (key, value) => {
   if (key === "elementType" && typeof value === "function")
     return { name: value.name };
 
+  if (key === "memoizedProps" && typeof value === "object" && value)
+    return value;
+
   if (typeof value === "object" && value !== null) {
     if (seen.has(value)) return undefined;
 
@@ -15,9 +18,9 @@ const getCircularReplacer = (key, value) => {
   return value;
 };
 
-const reactree = root => {
+const reactree = rootInternalRoot => {
   try {
-    const fiber = deepCopy(root);
+    const fiber = deepCopy(rootInternalRoot);
     const fiberJson = JSON.stringify(fiber.current, getCircularReplacer);
     const blob = new Blob([fiberJson], { type: "text/json;charset=utf-8" });
     const url = URL.createObjectURL(blob);

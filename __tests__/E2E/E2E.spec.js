@@ -38,14 +38,14 @@ test.describe("E2E Test", () => {
 
   test("폴더 선택 버튼을 누르면 실행할 경로를 선정할 수 있습니다.", async () => {
     await eph.stubDialog(electronApp, "showOpenDialog", {
-      filePaths: [`${os.homedir()}/Desktop/test1`],
+      filePaths: [`${os.homedir()}/Desktop/${process.env.DIRECTORY_PATH}`],
       canceled: false,
     });
 
     await window.getByTestId("path").click();
     const result = await eph.ipcMainInvokeHandler(electronApp, "get-path");
 
-    expect(result).toBe(`${os.homedir()}/Desktop/test1`);
+    expect(result).toBe(`${os.homedir()}/Desktop/${process.env.DIRECTORY_PATH}`);
   });
 
   test("시작 버튼을 누르면 화면에 사용자의 리액트 구조를 추출합니다.", async () => {

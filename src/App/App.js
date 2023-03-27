@@ -162,17 +162,6 @@ function App() {
               {pathEllips}
             </Button>
           </div>
-          <div className="buttonBar">
-            <p>시작 버튼을 눌러주세요.</p>
-            <Button
-              id="npmStartButton"
-              type="text"
-              disabled={!directoryPath}
-              data-testid="start"
-            >
-              npm start
-            </Button>
-          </div>
         </div>
         <div className="sideBar">
           <div>

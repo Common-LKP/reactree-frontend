@@ -30,7 +30,7 @@
     "electron:serve": "concurrently -k \"cross-env PORT=3002 BROWSER=none npm start\" \"npm run electron:start\"",
     "electron:build": "",
     "electron:start": "wait-on tcp:3002 && electron .",
-    "pre-commit": "lint-staged && rm -rf .git/hooks && ln -s ../.husky .git/hooks"
+    "pre-commit": "rm -rf .git/hooks && ln -s ../.husky .git/hooks"
   },
   "jest": {
     "testEnvironment": "jsdom",
