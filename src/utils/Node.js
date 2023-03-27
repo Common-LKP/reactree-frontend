@@ -54,7 +54,6 @@ Node.prototype.addState = function (node) {
   if (!node.memoizedState) return;
 
   if (node.tag === 0 || node.tag === 1) {
-    this.state.push(node.tag);
     pushState(node.memoizedState, this.state);
   }
 };

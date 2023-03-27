@@ -70,10 +70,10 @@ export default function D3Tree() {
 
         if (nodeData) {
           setNodeName(nodeData.data.name);
+          setNodeId(nodeData.data.uuid);
 
           if (typeof nodeData.data.name === "object") setNodeName("-");
 
-          setNodeId(nodeData.data.uuid);
           setNodeProps(nodeData.data.props.join(", "));
           setNodeState(nodeData.data.state.join(", "));
         }
