@@ -60,34 +60,30 @@ export default function D3Tree() {
     svg.current.appendChild(chart);
 
     const modal = document.querySelector(".modal");
-    const componentNodes = document.querySelectorAll("svg circle");
+    const svgElement = document.querySelector(".svg svg");
 
-    componentNodes.forEach(node => {
-      node.addEventListener("mouseover", event => {
-        const nodeData = hierarchyData.find(
-          d => d.data.uuid === event.target.id,
-        );
+    svgElement.addEventListener("mouseover", event => {
+      const nodeData = hierarchyData.find(d => d.data.uuid === event.target.id);
 
-        if (nodeData) {
-          setNodeName(nodeData.data.name);
-          setNodeId(nodeData.data.uuid);
+      if (nodeData) {
+        setNodeName(nodeData.data.name);
+        setNodeId(nodeData.data.uuid);
 
-          if (typeof nodeData.data.name === "object") setNodeName("-");
+        if (typeof nodeData.data.name === "object") setNodeName("-");
 
-          setNodeProps(nodeData.data.props.join(", "));
-          setNodeState(nodeData.data.state.join(", "));
-        }
-      });
-      node.addEventListener("mousemove", event => {
-        modal.style.left = `${event.clientX + 10}px`;
-        modal.style.top = `${event.clientY - modal.clientHeight - 10}px`;
-      });
-      node.addEventListener("mouseout", () => {
-        setNodeId(null);
-        setNodeName(null);
-        setNodeProps(null);
-        setNodeState(null);
-      });
+        setNodeProps(nodeData.data.props.join(", "));
+        setNodeState(nodeData.data.state.join(", "));
+      }
+    });
+    svgElement.addEventListener("mousemove", event => {
+      modal.style.left = `${event.clientX + 10}px`;
+      modal.style.top = `${event.clientY - modal.clientHeight - 10}px`;
+    });
+    svgElement.addEventListener("mouseout", () => {
+      setNodeId(null);
+      setNodeName(null);
+      setNodeProps(null);
+      setNodeState(null);
     });
   }, [hierarchyData, layoutWidth, layoutHeight]);
 
