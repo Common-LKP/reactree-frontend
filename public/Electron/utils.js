@@ -1,6 +1,6 @@
+const { app } = require("electron");
 const { execSync, exec } = require("child_process");
 const os = require("os");
-const { dialog, app } = require("electron");
 
 const fileInfo = {
   filePath: null,
@@ -71,14 +71,7 @@ const handleErrorMessage = sdterr => {
     }
   }
 
-  if (detail) {
-    dialog.showMessageBox({
-      buttons: ["확인"],
-      title: "Error!",
-      message: "Error",
-      detail,
-    });
-  }
+  return detail;
 };
 
 module.exports = {
