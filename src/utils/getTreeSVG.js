@@ -20,7 +20,7 @@ export default function getTreeSVG(
     r = 10,
     padding = 0.01,
     fill = "#999",
-    stroke = "#363636",
+    stroke = "#666666",
     strokeWidth = 3,
     strokeOpacity = 5,
     strokeLinejoin,
@@ -57,10 +57,7 @@ export default function getTreeSVG(
       .attr("viewBox", [vx, vy, vw, vh])
       .attr("width", width)
       .attr("height", height)
-      .attr(
-        "style",
-        "max-width: 100%; height: auto; height: intrinsic; background: gray",
-      )
+      .attr("style", "max-width: 100%; height: auto; height: intrinsic;")
       .attr("cursor", "pointer")
       .attr("font-family", "sans-serif")
       .attr("font-size", labelFontSize)
