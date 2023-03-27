@@ -5,7 +5,10 @@ const waitOn = require("wait-on");
 const os = require("os");
 const { readFileSync, writeFileSync, appendFileSync } = require("fs");
 
+const { createErrorDialog } = require("./dialog");
 const { handleErrorMessage, portNumber } = require("./utils");
+
+const userHomeDirectory = os.homedir();
 
 const registerIpcHandlers = () => {
   ipcMain.handle("get-path", async () => {
@@ -17,11 +20,17 @@ const registerIpcHandlers = () => {
       if (canceled) return new Error("open dialog failed");
 
       const filePath = filePaths[0];
-      const userHomeDirectory = os.homedir();
       exec(
         `ln -s ${userHomeDirectory}/Desktop/reactree-frontend/src/utils/reactree.js ${filePath}/src/reactree-symlink.js`,
         (error, stdout, stderr) => {
-          handleErrorMessage(stderr);
+          const pathError = handleErrorMessage(stderr);
+
+          if (pathError) {
+            view.webContents.loadFile(
+              path.join(__dirname, "../views/errorPage.html"),
+            );
+            createErrorDialog(pathError);
+          }
         },
       );
 
@@ -66,10 +75,17 @@ const registerIpcHandlers = () => {
         `PORT=${portNumber} BROWSER=none npm start`,
         { cwd: filePath },
         (error, stdout, stderr) => {
-          handleErrorMessage(stderr);
+          const startError = handleErrorMessage(stderr);
+          
+          if (startError) {
+            view.webContents.loadFile(
+              path.join(__dirname, "../views/errorPage.html"),
+            );
+            createErrorDialog(startError);
+          }
         },
       );
-
+ 
       await waitOn({ resources: [`http://localhost:${portNumber}`] });
       view.webContents.loadURL(`http://localhost:${portNumber}`);
 
@@ -77,7 +93,6 @@ const registerIpcHandlers = () => {
 
       writeFileSync(`${filePath}/src/index.js`, originalUserIndexJScodes, {
         encoding: "utf8",
-        flag: "w",
       });
 
       exec(`rm ${filePath}/src/reactree-symlink.js`);
@@ -91,7 +106,12 @@ const registerIpcHandlers = () => {
 
       return filePath;
     } catch (error) {
-      return console.error(error);
+      view.webContents.loadFile(
+        path.join(__dirname, "../views/errorPage.html"),
+      );
+      createErrorDialog(
+        "서버 연결이 원활하지 않습니다. 잠시 후 다시 시도해주세요.",
+      );
     }
   });
 };

@@ -5,7 +5,7 @@
   "uuid": "asd13rwef23rsdf",
   "children": [
     {
-      "name": "CompSecret",
+      "name": "{_context}",
       "props": ["secret"],
       "state": ["state1"],
       "uuid": "f23jkthsndgjkssd",
