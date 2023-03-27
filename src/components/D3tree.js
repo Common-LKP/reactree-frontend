@@ -9,7 +9,7 @@ import getTreeSVG from "../utils/getTreeSVG";
 import createNode from "../utils/reactFiberTree";
 import Node from "../utils/Node";
 import mockTreeData from "../assets/mockTreeData.json";
-import { COLORS } from "../assets/constants";
+import { COLORS, SIZE } from "../assets/constants";
 
 const Wrapper = styled.div`
   height: 100%;
@@ -83,17 +83,24 @@ export default function D3Tree() {
 
       if (nodeData) {
         setNodeName(nodeData.data.name);
-        setNodeId(nodeData.data.uuid);
-
         if (typeof nodeData.data.name === "object") setNodeName("-");
 
+        setNodeId(nodeData.data.uuid);
         setNodeProps(nodeData.data.props.join(", "));
         setNodeState(nodeData.data.state.join(", "));
       }
     });
     svgElement.addEventListener("mousemove", event => {
-      modal.style.left = `${event.clientX + 10}px`;
-      modal.style.top = `${event.clientY - modal.clientHeight - 10}px`;
+      const isMouseCloseToRight =
+        window.innerWidth - event.clientX < SIZE.MODAL_WIDTH + SIZE.PADDING;
+
+      if (isMouseCloseToRight) {
+        modal.style.left = `${event.clientX - 10 - SIZE.MODAL_WIDTH}px`;
+        modal.style.top = `${event.clientY - modal.clientHeight - 10}px`;
+      } else {
+        modal.style.left = `${event.clientX + 10}px`;
+        modal.style.top = `${event.clientY - modal.clientHeight - 10}px`;
+      }
     });
     svgElement.addEventListener("mouseout", () => {
       setNodeId(null);
