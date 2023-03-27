@@ -23,6 +23,22 @@ const Wrapper = styled.div`
     color: ${COLORS.BUTTON};
     position: absolute;
   }
+
+  .modal .info-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
+
+    .title {
+      width: 60px;
+      font-weight: 700;
+    }
+
+    .description {
+      width: 135px;
+      text-align: left;
+    }
+  }
 `;
 
 export default function D3Tree() {
@@ -92,9 +108,18 @@ export default function D3Tree() {
       <div ref={svg} className="svg" />
       <div className="modal">
         <Modal nodeId={nodeId}>
-          <div>name: {nodeName || "-"}</div>
-          <div>props: {nodeProps || "-"}</div>
-          <div>state: {nodeState || "-"}</div>
+          <div className="info-row">
+            <span className="title">name : </span>
+            <span className="description">{nodeName || "-"}</span>
+          </div>
+          <div className="info-row">
+            <span className="title">props : </span>
+            <span className="description">{nodeProps || "-"}</span>
+          </div>
+          <div className="info-row">
+            <span className="title">state : </span>
+            <span className="description">{nodeState || "-"}</span>
+          </div>
         </Modal>
       </div>
     </Wrapper>

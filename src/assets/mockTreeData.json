@@ -1,31 +1,31 @@
 {
-  "name": "CompFirst",
+  "name": "Component First",
   "props": ["props1", "props2"],
   "state": ["state1, state2"],
   "uuid": "asd13rwef23rsdf",
   "children": [
     {
-      "name": "{_context}",
+      "name": "Component Secret",
       "props": ["secret"],
       "state": ["state1"],
       "uuid": "f23jkthsndgjkssd",
       "children": []
     },
     {
-      "name": "CompSecond",
+      "name": "Component Second",
       "props": ["second"],
       "state": ["secondState"],
       "uuid": "sfjkhwjekbgnmsd",
       "children": [
         {
-          "name": "CompThird",
+          "name": "Component Third",
           "props": ["Third"],
           "state": ["thirdState"],
           "uuid": "dfjknbwkjenmqsnslf",
           "children": []
         },
         {
-          "name": "CompThird",
+          "name": "Component Third",
           "props": ["Thirdasdasd2"],
           "state": ["thirdState2", "thirdState5"],
           "uuid": "kjdshfjknweiuskdnjm",

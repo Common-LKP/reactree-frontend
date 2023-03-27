@@ -4,8 +4,8 @@ import { COLORS, SIZE } from "../assets/constants";
 
 const Wrapper = styled.div`
   display: ${props => (props.nodeId ? "block" : "none")};
-  width: 180px;
-  padding: ${SIZE.PADDING}px;
+  width: 200px;
+  padding: ${SIZE.PADDING / 2}px ${SIZE.PADDING}px;
   background-color: ${COLORS.BORDER};
   border: 1px solid ${COLORS.BUTTON};
   border-radius: 4px;

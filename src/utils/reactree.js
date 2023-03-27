@@ -19,25 +19,21 @@ const getCircularReplacer = (key, value) => {
 };
 
 const reactree = rootInternalRoot => {
-  try {
-    const fiber = deepCopy(rootInternalRoot);
-    const fiberJson = JSON.stringify(fiber.current, getCircularReplacer);
-    const blob = new Blob([fiberJson], { type: "text/json;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
+  const fiber = deepCopy(rootInternalRoot);
+  const fiberJson = JSON.stringify(fiber.current, getCircularReplacer);
+  const blob = new Blob([fiberJson], { type: "text/json;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
 
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "data.json";
-    link.click();
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "data.json";
+  link.click();
 
-    setTimeout(() => {
-      URL.revokeObjectURL(url);
-    }, 0);
+  setTimeout(() => {
+    URL.revokeObjectURL(url);
+  }, 0);
 
-    return undefined;
-  } catch (error) {
-    return console.error(error);
-  }
+  return undefined;
 };
 
 export default reactree;
