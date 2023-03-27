@@ -12,6 +12,8 @@ function Node() {
 const pushState = function (memoizedState, stateArray) {
   if (!memoizedState) return;
 
+  if (typeof memoizedState.memoizedState === "object") return;
+
   stateArray.push(memoizedState.memoizedState);
   pushState(memoizedState.next, stateArray);
 };

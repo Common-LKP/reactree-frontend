@@ -5,10 +5,11 @@ const waitOn = require("wait-on");
 const os = require("os");
 const fs = require("fs");
 
+const userHomeDirectory = os.homedir();
+
 const { fileInfo, portNumber, handleErrorMessage } = require("./utils");
 const { createErrorDialog } = require("./dialog");
 
-const userHomeDir = os.homedir();
 const registerIpcHandlers = () => {
   ipcMain.handle("get-path", async () => {
     try {
@@ -19,7 +20,7 @@ const registerIpcHandlers = () => {
       if (!canceled && filePaths.length > 0) {
         [fileInfo.filePath] = filePaths;
 
-        const reactreePath = path.join(userHomeDir);
+        const reactreePath = path.join(userHomeDirectory);
         exec(
           `ln -s ${reactreePath}/Desktop/reactree-frontend/src/utils/reactree.js ${filePaths}/src/Symlink.js`,
           (error, stdout, stderr) => {
@@ -76,7 +77,7 @@ const registerIpcHandlers = () => {
     try {
       await waitOn({ resources: [`http://localhost:${portNumber}`] });
       view.webContents.loadURL(`http://localhost:${portNumber}`);
-      await waitOn({ resources: [`${userHomeDir}/Downloads/data.json`] });
+      await waitOn({ resources: [`${userHomeDirectory}/Downloads/data.json`] });
     } catch (error) {
       view.webContents.loadFile(
         path.join(__dirname, "../views/errorPage.html"),
@@ -87,10 +88,9 @@ const registerIpcHandlers = () => {
     }
 
     const readfile = fs.readFileSync(
-      path.join(`${userHomeDir}/Downloads/data.json`),
+      path.join(`${userHomeDirectory}/Downloads/data.json`),
     );
     const fiberFile = JSON.parse(readfile);
-
     win.webContents.send("get-node-data", fiberFile);
   });
 };

@@ -19,12 +19,17 @@ const reactree = root => {
   try {
     const fiber = deepCopy(root);
     const fiberJson = JSON.stringify(fiber.current, getCircularReplacer);
-    const link = document.createElement("a");
-    const jsonString = `data:text/json;charset=utf-8,${fiberJson}`;
+    const blob = new Blob([fiberJson], { type: "text/json;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
 
-    link.href = jsonString;
+    const link = document.createElement("a");
+    link.href = url;
     link.download = "data.json";
     link.click();
+
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 0);
 
     return undefined;
   } catch (error) {

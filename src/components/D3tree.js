@@ -69,8 +69,11 @@ export default function D3Tree() {
         );
 
         if (nodeData) {
-          setNodeId(nodeData.data.uuid);
           setNodeName(nodeData.data.name);
+          setNodeId(nodeData.data.uuid);
+
+          if (typeof nodeData.data.name === "object") setNodeName("-");
+
           setNodeProps(nodeData.data.props.join(", "));
           setNodeState(nodeData.data.state.join(", "));
         }
@@ -93,9 +96,9 @@ export default function D3Tree() {
       <div ref={svg} className="svg" />
       <div className="modal">
         <Modal nodeId={nodeId}>
-          <div>name: {nodeName}</div>
-          <div>props: {nodeProps}</div>
-          <div>state: {nodeState}</div>
+          <div>name: {nodeName || "-"}</div>
+          <div>props: {nodeProps || "-"}</div>
+          <div>state: {nodeState || "-"}</div>
         </Modal>
       </div>
     </Wrapper>
