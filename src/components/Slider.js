@@ -45,7 +45,7 @@ export default function Slider() {
             id="sliderX"
             type="range"
             min="10"
-            max="700"
+            max="150"
             defaultValue={window.innerWidth / 4.5}
             name="width"
             aria-label="width"
@@ -57,7 +57,7 @@ export default function Slider() {
             id="sliderY"
             type="range"
             min="10"
-            max="400"
+            max="100"
             name="height"
             aria-label="height"
           />
