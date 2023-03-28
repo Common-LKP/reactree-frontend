@@ -1,4 +1,4 @@
-const { app } = require("electron");
+const { app, dialog } = require("electron");
 const { execSync, exec } = require("child_process");
 const os = require("os");
 
@@ -71,9 +71,25 @@ const handleErrorMessage = sdterr => {
   return detail;
 };
 
+const checkDownloadJson = async window => {
+  const options = {
+    type: "question",
+    buttons: ["Yes", "No"],
+    defaultId: 1,
+    title: "Confirm",
+    message:
+      "트리구조를 그리기 위해서는 JSON파일을 다운로드 해야합니다. \n 다운로드 하시겠습니까?",
+  };
+
+  const result = await dialog.showMessageBox(window, options);
+
+  return result.response === 0;
+};
+
 module.exports = {
   handleErrorMessage,
   checkPortNumber,
   quitApplication,
   portNumber,
+  checkDownloadJson,
 };

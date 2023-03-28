@@ -6,7 +6,11 @@ const os = require("os");
 const { readFileSync, writeFileSync, appendFileSync } = require("fs");
 
 const { createErrorDialog } = require("./dialog");
-const { handleErrorMessage, portNumber } = require("./utils");
+const {
+  handleErrorMessage,
+  checkDownloadJson,
+  portNumber,
+} = require("./utils");
 
 const userHomeDirectory = os.homedir();
 
@@ -36,9 +40,15 @@ const registerIpcHandlers = () => {
       createErrorDialog(
         "서버 연결이 원활하지 않습니다. 잠시 후 다시 시도해주세요.",
       );
+      return;
     }
 
     const filePath = filePaths[0];
+
+    const checkUserConfirm = await checkDownloadJson(mainWindow);
+
+    if (!checkUserConfirm) return;
+
     exec(
       `ln -s ${userHomeDirectory}/Desktop/reactree-frontend/src/utils/reactree.js ${filePath}/src/reactree-symlink.js`,
       (error, stdout, stderr) => {
@@ -109,6 +119,7 @@ const registerIpcHandlers = () => {
     exec("rm data.json", { cwd: `${os.homedir()}/Downloads` });
     mainWindow.webContents.send("get-node-data", JSON.parse(fiberFile));
 
+    // eslint-disable-next-line consistent-return
     return filePath;
   });
 };
