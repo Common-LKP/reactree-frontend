@@ -63,6 +63,7 @@ export default function D3Tree() {
   const [nodeName, setNodeName] = useState("");
   const [nodeProps, setNodeProps] = useState(null);
   const [nodeState, setNodeState] = useState(null);
+  const [nodeReduxState, setNodeReduxState] = useState(null);
 
   useEffect(() => {
     getTreeData();
@@ -89,6 +90,7 @@ export default function D3Tree() {
         setNodeId(nodeData.data.uuid);
         setNodeProps(nodeData.data.props.join(",\n"));
         setNodeState(nodeData.data.state.join(",\n"));
+        setNodeReduxState(nodeData.data.reduxState.join(",\n"));
       }
     });
     svgElement.addEventListener("mousemove", event => {
@@ -117,16 +119,20 @@ export default function D3Tree() {
       <div className="modal">
         <Modal nodeId={nodeId}>
           <div className="info-row">
-            <span className="title">name : </span>
+            <span className="title">Name : </span>
             <span className="description">{nodeName || "-"}</span>
           </div>
           <div className="info-row">
-            <span className="title">props : </span>
+            <span className="title">Props : </span>
             <pre className="description">{nodeProps || "-"}</pre>
           </div>
           <div className="info-row">
-            <span className="title">state : </span>
+            <span className="title">Local state : </span>
             <pre className="description">{nodeState || "-"}</pre>
+          </div>
+          <div className="info-row">
+            <span className="title">Redux state : </span>
+            <pre className="description">{nodeReduxState || "-"}</pre>
           </div>
         </Modal>
       </div>

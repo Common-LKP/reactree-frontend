@@ -5,11 +5,12 @@ function Node() {
   this.name = "";
   this.props = [];
   this.state = [];
+  this.reduxState = [];
   this.uuid = uuidv4();
   this.children = [];
 }
 
-const pushState = function (memoizedState, stateArray) {
+const pushState = function (memoizedState, stateArray, reduxStateArray) {
   if (memoizedState === null) return;
 
   if (memoizedState.baseState) {
@@ -17,10 +18,10 @@ const pushState = function (memoizedState, stateArray) {
   }
 
   if (memoizedState.queue?.value) {
-    stateArray.push(JSON.stringify(memoizedState.queue.value, null, 2));
+    reduxStateArray.push(JSON.stringify(memoizedState.queue.value, null, 2));
   }
 
-  pushState(memoizedState.next, stateArray);
+  pushState(memoizedState.next, stateArray, reduxStateArray);
 };
 
 Node.prototype.addChild = function (child) {
@@ -59,7 +60,7 @@ Node.prototype.addState = function (node) {
   if (!node.memoizedState) return;
 
   if (node.tag === 0 || node.tag === 1) {
-    pushState(node.memoizedState, this.state);
+    pushState(node.memoizedState, this.state, this.reduxState);
   }
 };
 
