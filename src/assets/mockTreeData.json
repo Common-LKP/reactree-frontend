@@ -1,13 +1,15 @@
 {
   "name": "Component First",
   "props": ["props1", "props2"],
-  "state": ["state1, state2"],
+  "state": ["state1", "state2"],
+  "reduxState": [],
   "uuid": "asd13rwef23rsdf",
   "children": [
     {
       "name": "Component Secret",
       "props": ["secret"],
       "state": ["state1"],
+      "reduxState": [],
       "uuid": "f23jkthsndgjkssd",
       "children": []
     },
@@ -15,12 +17,14 @@
       "name": "Component Second",
       "props": ["second"],
       "state": ["secondState"],
+      "reduxState": [],
       "uuid": "sfjkhwjekbgnmsd",
       "children": [
         {
           "name": "Component Third",
           "props": ["Third"],
           "state": ["thirdState"],
+          "reduxState": [],
           "uuid": "dfjknbwkjenmqsnslf",
           "children": []
         },
@@ -28,6 +32,7 @@
           "name": "Component Third",
           "props": ["Thirdasdasd2"],
           "state": ["thirdState2", "thirdState5"],
+          "reduxState": [],
           "uuid": "kjdshfjknweiuskdnjm",
           "children": []
         }

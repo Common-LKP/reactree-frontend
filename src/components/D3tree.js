@@ -27,6 +27,8 @@ const Wrapper = styled.div`
   .modal .info-row {
     display: flex;
     margin: 5px 0;
+    padding: 3px;
+    box-shadow: 0px 1px 5px 1px rgba(0, 0, 0, 0.2);
 
     .title {
       width: 60px;
@@ -107,9 +109,6 @@ export default function D3Tree() {
     });
     svgElement.addEventListener("mouseout", () => {
       setNodeId(null);
-      setNodeName(null);
-      setNodeProps(null);
-      setNodeState(null);
     });
   }, [hierarchyData, layoutWidth, layoutHeight]);
 
@@ -119,19 +118,19 @@ export default function D3Tree() {
       <div className="modal">
         <Modal nodeId={nodeId}>
           <div className="info-row">
-            <span className="title">Name : </span>
+            <span className="title">Name </span>
             <span className="description">{nodeName || "-"}</span>
           </div>
           <div className="info-row">
-            <span className="title">Props : </span>
+            <span className="title">Props </span>
             <pre className="description">{nodeProps || "-"}</pre>
           </div>
           <div className="info-row">
-            <span className="title">Local state : </span>
+            <span className="title">Local state </span>
             <pre className="description">{nodeState || "-"}</pre>
           </div>
           <div className="info-row">
-            <span className="title">Redux state : </span>
+            <span className="title">Redux state </span>
             <pre className="description">{nodeReduxState || "-"}</pre>
           </div>
         </Modal>

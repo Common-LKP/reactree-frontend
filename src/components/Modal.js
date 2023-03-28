@@ -11,7 +11,7 @@ const Wrapper = styled.div`
   border: 1px solid ${COLORS.BUTTON};
   border-radius: 4px;
   color: ${COLORS.WHITE};
-  box-shadow: 0px 1px 5px 1px rgba(255, 255, 255, 0.2);
+  box-shadow: 1px 1px 5px 1px rgba(255, 255, 255, 0.2);
   font-family: "Whitney", "Helvetica Neue";
   transition: all 0.3s ease;
 `;
