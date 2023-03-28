@@ -16,7 +16,7 @@ const Wrapper = styled.div`
   overflow: hidden;
 
   .svg {
-    height: 100%;
+    height: 90%;
   }
 
   .modal {
@@ -66,6 +66,7 @@ export default function D3Tree() {
   const [nodeProps, setNodeProps] = useState(null);
   const [nodeState, setNodeState] = useState(null);
   const [nodeReduxState, setNodeReduxState] = useState(null);
+  const [nodeFile, setNodeFile] = useState(null);
 
   useEffect(() => {
     getTreeData();
@@ -110,6 +111,14 @@ export default function D3Tree() {
     svgElement.addEventListener("mouseout", () => {
       setNodeId(null);
     });
+    svgElement.addEventListener("click", event => {
+      if (event.target.tagName === "circle") {
+        const nodeData = hierarchyData.find(
+          d => d.data.uuid === event.target.id,
+        );
+        setNodeFile(nodeData.data.file);
+      }
+    });
   }, [hierarchyData, layoutWidth, layoutHeight]);
 
   return (
@@ -135,6 +144,7 @@ export default function D3Tree() {
           </div>
         </Modal>
       </div>
+      <div>path: {nodeFile?.fileName}</div>
     </Wrapper>
   );
 }

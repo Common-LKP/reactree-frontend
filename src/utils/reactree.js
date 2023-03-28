@@ -1,5 +1,3 @@
-/* eslint-disable no-underscore-dangle */
-/* eslint-disable no-prototype-builtins */
 import deepCopy from "./deepCopy";
 
 const essentialKeys = ["memoizedState", "queue", "value"];
@@ -9,15 +7,6 @@ const seen = new WeakSet();
 const getCircularReplacer = (key, value) => {
   if (key === "elementType" && typeof value === "function")
     return { name: value.name };
-
-  if (
-    key === "elementType" &&
-    typeof value === "object" &&
-    value &&
-    value.hasOwnProperty("_context")
-  ) {
-    return { name: value._context.displayName };
-  }
 
   if (key === "memoizedProps" && typeof value === "object" && value)
     return value;
