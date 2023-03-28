@@ -119,7 +119,7 @@ export default function D3Tree() {
         <Modal nodeId={nodeId}>
           <div className="info-row">
             <span className="title">Name </span>
-            <span className="description">{nodeName || "-"}</span>
+            <pre className="description">{nodeName || "-"}</pre>
           </div>
           <div className="info-row">
             <span className="title">Props </span>
