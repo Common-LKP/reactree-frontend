@@ -26,16 +26,17 @@ const Wrapper = styled.div`
 
   .modal .info-row {
     display: flex;
-    justify-content: space-between;
     margin: 5px 0;
 
     .title {
       width: 60px;
+      min-width: 60px;
       font-weight: 700;
     }
 
     .description {
-      width: 135px;
+      width: auto;
+      min-width: 130px;
       text-align: left;
     }
   }
@@ -86,16 +87,16 @@ export default function D3Tree() {
         if (typeof nodeData.data.name === "object") setNodeName("-");
 
         setNodeId(nodeData.data.uuid);
-        setNodeProps(nodeData.data.props.join(", "));
-        setNodeState(nodeData.data.state.join(", "));
+        setNodeProps(nodeData.data.props.join(",\n"));
+        setNodeState(nodeData.data.state.join(",\n"));
       }
     });
     svgElement.addEventListener("mousemove", event => {
       const isMouseCloseToRight =
-        window.innerWidth - event.clientX < SIZE.MODAL_WIDTH + SIZE.PADDING;
+        window.innerWidth - event.clientX < modal.clientWidth + SIZE.PADDING;
 
       if (isMouseCloseToRight) {
-        modal.style.left = `${event.clientX - 10 - SIZE.MODAL_WIDTH}px`;
+        modal.style.left = `${event.clientX - 10 - modal.clientWidth}px`;
         modal.style.top = `${event.clientY - modal.clientHeight - 10}px`;
       } else {
         modal.style.left = `${event.clientX + 10}px`;
@@ -121,11 +122,11 @@ export default function D3Tree() {
           </div>
           <div className="info-row">
             <span className="title">props : </span>
-            <span className="description">{nodeProps || "-"}</span>
+            <pre className="description">{nodeProps || "-"}</pre>
           </div>
           <div className="info-row">
             <span className="title">state : </span>
-            <span className="description">{nodeState || "-"}</span>
+            <pre className="description">{nodeState || "-"}</pre>
           </div>
         </Modal>
       </div>

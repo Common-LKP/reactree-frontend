@@ -10,11 +10,16 @@ function Node() {
 }
 
 const pushState = function (memoizedState, stateArray) {
-  if (!memoizedState) return;
+  if (memoizedState === null) return;
 
-  if (typeof memoizedState.memoizedState === "object") return;
+  if (memoizedState.baseState) {
+    stateArray.push(memoizedState.baseState);
+  }
 
-  stateArray.push(memoizedState.memoizedState);
+  if (memoizedState.queue?.value) {
+    stateArray.push(JSON.stringify(memoizedState.queue.value, null, 2));
+  }
+
   pushState(memoizedState.next, stateArray);
 };
 
