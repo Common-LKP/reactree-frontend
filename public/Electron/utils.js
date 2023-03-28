@@ -1,4 +1,4 @@
-const { app } = require("electron");
+const { app, dialog } = require("electron");
 const { execSync, exec } = require("child_process");
 const os = require("os");
 
@@ -44,7 +44,7 @@ const quitApplication = () => {
   }
 };
 
-const handleErrorMessage = sdterr => {
+const getErrorMessage = sdterr => {
   const lines = sdterr.split(os.EOL);
   let detail;
 
@@ -71,9 +71,14 @@ const handleErrorMessage = sdterr => {
   return detail;
 };
 
+const createErrorDialog = content => {
+  const title = "에러 발생!";
+  dialog.showErrorBox(title, content);
+};
+
 module.exports = {
-  handleErrorMessage,
-  checkPortNumber,
+  getErrorMessage,
   quitApplication,
+  createErrorDialog,
   portNumber,
 };

@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const buttonElement = await getElementByIdAsync("directoryButton");
   buttonElement.addEventListener("click", async () => {
     try {
-      await window.electronAPI.openFileDialog();
+      await window.electronAPI.openDialog();
     } catch (error) {
       console.error(error);
     }
