@@ -2,8 +2,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  widthSpacing: 150,
-  heightSpacing: 250,
   layoutWidth: 700,
   layoutHeight: 1100,
 };
@@ -15,12 +13,6 @@ const d3treeSlice = createSlice({
     setLayout(state, action) {
       state.layoutWidth = action.payload.clientWidth;
       state.layoutHeight = action.payload.clientHeight;
-    },
-    setWidthSpacing(state, action) {
-      state.widthSpacing = action.payload.width;
-    },
-    setHeightSpacing(state, action) {
-      state.heightSpacing = action.payload.height;
     },
   },
 });
