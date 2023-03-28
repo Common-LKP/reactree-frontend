@@ -66,7 +66,10 @@ const registerIpcHandlers = () => {
       }, 0);
     `;
 
-    appendFileSync(`${filePath}/src/index.js`, JScodes);
+    if (!originalUserIndexJScodes.includes("import reactree from")) {
+      appendFileSync(`${filePath}/src/index.js`, JScodes);
+    }
+
     mainWindow.webContents.send("send-file-path", filePath);
     view.webContents.loadFile(path.join(__dirname, "../views/loading.html"));
     view.setBackgroundColor("white");

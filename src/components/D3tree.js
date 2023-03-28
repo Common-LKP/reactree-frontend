@@ -7,7 +7,6 @@ import { hierarchy } from "d3";
 import Modal from "./Modal";
 import getTreeSVG from "../utils/getTreeSVG";
 import createNode from "../utils/reactFiberTree";
-import Node from "../utils/Node";
 import mockTreeData from "../assets/mockTreeData.json";
 import { COLORS } from "../assets/constants";
 
@@ -28,12 +27,11 @@ const Wrapper = styled.div`
 export default function D3Tree() {
   const { layoutWidth, layoutHeight } = useSelector(state => state.d3tree);
   const [hierarchyData, setHierarchyData] = useState(hierarchy(mockTreeData));
-  const fiberTree = new Node();
 
   const getTreeData = async () => {
     try {
       await window.electronAPI.getNodeData((event, value) => {
-        createNode(value, fiberTree);
+        const fiberTree = createNode(value);
         setHierarchyData(hierarchy(fiberTree));
       });
     } catch (error) {

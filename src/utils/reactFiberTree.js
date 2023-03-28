@@ -1,23 +1,30 @@
 import Node from "./Node";
 
-function createNode(fiberNode, tree, parentTree) {
-  if (!fiberNode || Object.keys(fiberNode).length === 0) return;
+function createNode(fiberNode, parentTree) {
+  if (!fiberNode || Object.keys(fiberNode).length === 0) return null;
 
   const node = fiberNode.alternate ? fiberNode.alternate : fiberNode;
+  const tree = new Node();
 
   tree.setName(node);
   tree.addProps(node);
   tree.addState(node);
 
   if (fiberNode.sibling) {
-    parentTree.addChild(new Node());
-    createNode(fiberNode.sibling, parentTree.children.at(-1), parentTree);
+    const siblingTree = createNode(fiberNode.sibling, parentTree);
+    if (siblingTree) {
+      parentTree.addChild(siblingTree);
+    }
   }
 
   if (fiberNode.child) {
-    tree.addChild(new Node());
-    createNode(fiberNode.child, tree.children[0], tree);
+    const childTree = createNode(fiberNode.child, tree);
+    if (childTree) {
+      tree.addChild(childTree);
+    }
   }
+
+  return tree || null;
 }
 
 export default createNode;
