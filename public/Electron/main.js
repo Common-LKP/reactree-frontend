@@ -23,7 +23,7 @@ app.whenReady().then(() => {
   ipcMain.handle("open-dialog", openDialogHandler);
 
   ipcMain.handle("nodeFileInfo-to-main", (event, value) => {
-    const nodeFilePath = value.fileName;
+    const nodeFilePath = value?.fileName;
     const code = readFileSync(nodeFilePath, { encoding: "utf8" });
 
     const mainWindow = BrowserWindow.getFocusedWindow();

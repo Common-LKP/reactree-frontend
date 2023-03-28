@@ -16,7 +16,7 @@ const Wrapper = styled.div`
   overflow: hidden;
 
   .svg {
-    height: 90%;
+    height: 70%;
   }
 
   .modal {
@@ -42,18 +42,38 @@ const Wrapper = styled.div`
       text-align: left;
     }
   }
+
+  .code-container {
+    z-index: 2;
+    padding: 5px;
+    background-color: ${COLORS.BACKGROUND};
+    box-shadow: 0px 1px 5px 1px rgba(0, 0, 0, 0.2);
+    overflow: scroll;
+  }
 `;
 
 export default function D3Tree() {
   const { layoutWidth, layoutHeight } = useSelector(state => state.d3tree);
   const [hierarchyData, setHierarchyData] = useState(hierarchy(mockTreeData));
   const fiberTree = new Node();
+  const [code, setCode] = useState("");
 
   const getTreeData = async () => {
     try {
       await window.electronAPI.getNodeData((event, value) => {
         createNode(value, fiberTree);
         setHierarchyData(hierarchy(fiberTree));
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getCodes = async () => {
+    try {
+      await window.electronAPI.getNodeFileInfo((event, value) => {
+        console.log(value);
+        setCode(value);
       });
     } catch (error) {
       console.error(error);
@@ -70,6 +90,7 @@ export default function D3Tree() {
 
   useEffect(() => {
     getTreeData();
+    getCodes();
 
     const chart = getTreeSVG(hierarchyData.data, {
       label: d => d.name,
@@ -111,12 +132,18 @@ export default function D3Tree() {
     svgElement.addEventListener("mouseout", () => {
       setNodeId(null);
     });
-    svgElement.addEventListener("click", event => {
+    svgElement.addEventListener("click", async event => {
       if (event.target.tagName === "circle") {
         const nodeData = hierarchyData.find(
           d => d.data.uuid === event.target.id,
         );
         setNodeFile(nodeData.data.file);
+
+        try {
+          await window.electronAPI.sendNodeFileInfo(nodeData.data.file);
+        } catch (error) {
+          console.error(error);
+        }
       }
     });
   }, [hierarchyData, layoutWidth, layoutHeight]);
@@ -145,6 +172,7 @@ export default function D3Tree() {
         </Modal>
       </div>
       <div>path: {nodeFile?.fileName}</div>
+      <pre className="code-container">{code}</pre>
     </Wrapper>
   );
 }
