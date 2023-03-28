@@ -16,7 +16,12 @@ function createNode(fiberNode, tree, parentTree) {
 
   if (fiberNode.child) {
     tree.addChild(new Node());
-    createNode(fiberNode.child, tree.children[0], tree);
+
+    if (fiberNode.child.tag === 10 || fiberNode.child.tag === 11) {
+      createNode(fiberNode.child.child, tree.children[0], tree);
+    } else {
+      createNode(fiberNode.child, tree.children[0], tree);
+    }
   }
 }
 

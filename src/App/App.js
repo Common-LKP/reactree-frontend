@@ -2,8 +2,9 @@ import { useEffect, useRef, useLayoutEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 
-import { pathActions } from "../features/pathSlice";
 import { d3treeActions } from "../features/d3treeSlice";
+import DirectorySelection from "../components/DirectorySelection";
+import Slider from "../components/Slider";
 import D3Tree from "../components/D3tree";
 import GlobalStyles from "../styles/GlobalStyles.styles";
 import { COLORS, SIZE } from "../assets/constants";
@@ -29,91 +30,31 @@ const Nav = styled.nav`
   align-items: center;
   justify-content: space-between;
   margin-bottom: ${SIZE.PADDING}px;
-
-  .buttonSection {
-    width: 50%;
-    display: flex;
-    justify-content: space-evenly;
-
-    .buttonBar {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-
-      > p {
-        padding-bottom: ${SIZE.PADDING}px;
-      }
-    }
-  }
-
-  .sideBar {
-    width: 50%;
-    display: flex;
-    justify-content: space-evenly;
-
-    .title {
-      text-align: center;
-    }
-  }
-`;
-
-const Button = styled.button`
-  min-width: 250px;
-  height: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: ${COLORS.WHITE};
-  color: ${COLORS.BUTTON};
-  border: 2px solid ${COLORS.BUTTON};
-  border-radius: 10px;
-  font-weight: 500;
-  transition: 0.3s all ease;
-
-  :hover {
-    cursor: pointer;
-    background-color: ${COLORS.BUTTON};
-    color: ${COLORS.WHITE};
-  }
 `;
 
 const Main = styled.main`
-  height: 85%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  height: 85%;
   background-color: ${COLORS.BACKGROUND};
 
   .viewLayout {
     width: 100%;
     height: 100%;
+    margin: 1px;
     background-color: ${COLORS.VIEW_BACKGROUND};
-    color: white;
     border: 2px solid ${COLORS.BORDER};
     border-radius: 10px;
-    margin: 1px;
+    color: white;
   }
-`;
-
-const Description = styled.div`
-  display: ${props => (props.hasPath ? "none" : "block")};
-  text-align: center;
-  align-items: center;
 `;
 
 function App() {
   const dispatch = useDispatch();
-  const { directoryPath } = useSelector(state => state.path);
   const { layoutWidth, layoutHeight } = useSelector(state => state.d3tree);
   const ref = useRef(null);
-  let pathEllips = directoryPath || "폴더 선택";
-
-  useEffect(() => {
-    window.electronAPI.getFilePath((event, path) => {
-      dispatch(pathActions.setDirectoryPath({ path }));
-    });
-  }, [directoryPath, dispatch]);
 
   useLayoutEffect(() => {
     dispatch(
@@ -139,13 +80,6 @@ function App() {
     return () => window.addEventListener("resize", handleWindow);
   }, [layoutWidth, layoutHeight, dispatch]);
 
-  if (directoryPath) {
-    pathEllips =
-      directoryPath.length > 29
-        ? `...${directoryPath.slice(-29)}`
-        : directoryPath;
-  }
-
   return (
     <EntryWrapper>
       <GlobalStyles />
@@ -153,45 +87,8 @@ function App() {
         <h1>Reactree</h1>
       </Header>
       <Nav>
-        <div className="buttonSection">
-          <div className="buttonBar">
-            <p>프로젝트의 폴더를 선택해주세요.</p>
-            <Button id="directoryButton" data-testid="path">
-              {pathEllips}
-            </Button>
-          </div>
-        </div>
-        <div className="sideBar">
-          <div>
-            <div className="title">WIDTH</div>
-            <input
-              id="sliderX"
-              type="range"
-              className="rangeBar"
-              min="10"
-              max="600"
-              name="width"
-              aria-label="width"
-            />
-          </div>
-          <Description hasPath={directoryPath}>
-            폴더 경로를 선택하면 아래 예시와 같이
-            <br />
-            트리구조가 렌더링 됩니다.
-          </Description>
-          <div>
-            <div className="title">HEIGHT</div>
-            <input
-              id="sliderY"
-              type="range"
-              className="rangeBar"
-              min="50"
-              max="500"
-              name="height"
-              aria-label="height"
-            />
-          </div>
-        </div>
+        <DirectorySelection />
+        <Slider />
       </Nav>
       <Main>
         <div className="viewLayout render" />

@@ -19,14 +19,6 @@ export default function getTreeSVG(
     height,
     r = 10,
     padding = 0.01,
-    fill = "#999",
-    stroke = "#666666",
-    strokeWidth = 3,
-    strokeOpacity = 5,
-    strokeLinejoin,
-    strokeLinecap,
-    halo = "#fff",
-    haloWidth = 4,
     curve = curveBumpX,
   } = {},
 ) {
@@ -87,11 +79,9 @@ export default function getTreeSVG(
     svg
       .append("g")
       .attr("fill", "none")
-      .attr("stroke", stroke)
-      .attr("stroke-opacity", strokeOpacity)
-      .attr("stroke-linecap", strokeLinecap)
-      .attr("stroke-linejoin", strokeLinejoin)
-      .attr("stroke-width", strokeWidth)
+      .attr("stroke", "#666666")
+      .attr("stroke-opacity", 5)
+      .attr("stroke-width", 3)
       .selectAll("path")
       .data(root.links())
       .join("path")
@@ -112,7 +102,7 @@ export default function getTreeSVG(
     node
       .append("circle")
       .attr("id", d => d.data.uuid)
-      .attr("fill", d => (d.children ? stroke : fill))
+      .attr("fill", d => (d.data.tag === 0 ? "#7289da" : "#999"))
       .attr("r", r);
 
     if (labelList)
@@ -121,8 +111,8 @@ export default function getTreeSVG(
         .attr("dy", `${labelY}em`)
         .attr("text-anchor", "middle")
         .attr("paint-order", "stroke")
-        .attr("stroke", halo)
-        .attr("stroke-width", haloWidth)
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 4)
         .text((d, i) => labelList[i]);
 
     svg.call(
