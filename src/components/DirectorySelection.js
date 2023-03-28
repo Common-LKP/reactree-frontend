@@ -53,7 +53,7 @@ export default function DirectorySelection() {
   }
 
   useEffect(() => {
-    window.electronAPI.sendFilePath((event, path) => {
+    window.electronAPI.getFilePath((event, path) => {
       dispatch(setDirectoryPath({ path }));
     });
   }, [directoryPath, dispatch]);
