@@ -110,10 +110,8 @@ function App() {
   let pathEllips = directoryPath || "폴더 선택";
 
   useEffect(() => {
-    window.electronAPI.sendFilePath((event, path) => {
+    window.electronAPI.getFilePath((event, path) => {
       dispatch(pathActions.setDirectoryPath({ path }));
-
-      return path ? dispatch(pathActions.checkPath()) : null;
     });
   }, [directoryPath, dispatch]);
 
