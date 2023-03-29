@@ -17,5 +17,5 @@ const d3treeSlice = createSlice({
   },
 });
 
-export const d3treeActions = d3treeSlice.actions;
+export const { setLayout } = d3treeSlice.actions;
 export default d3treeSlice.reducer;

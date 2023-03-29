@@ -2,7 +2,7 @@ import { useEffect, useRef, useLayoutEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 
-import { d3treeActions } from "../features/d3treeSlice";
+import { setLayout } from "../features/d3treeSlice";
 import DirectorySelection from "../components/DirectorySelection";
 import Slider from "../components/Slider";
 import D3Tree from "../components/D3tree";
@@ -58,7 +58,7 @@ function App() {
 
   useLayoutEffect(() => {
     dispatch(
-      d3treeActions.setLayout({
+      setLayout({
         clientWidth: ref.current.clientWidth,
         clientHeight: ref.current.clientHeight,
       }),
@@ -68,7 +68,7 @@ function App() {
   useEffect(() => {
     const handleWindow = () => {
       dispatch(
-        d3treeActions.setLayout({
+        setLayout({
           clientWidth: ref.current.clientWidth,
           clientHeight: ref.current.clientHeight,
         }),
@@ -91,8 +91,8 @@ function App() {
         <Slider />
       </Nav>
       <Main>
-        <div className="viewLayout render" />
-        <div className="viewLayout tree" ref={ref}>
+        <div className="viewLayout" />
+        <div className="viewLayout" ref={ref}>
           <D3Tree />
         </div>
       </Main>

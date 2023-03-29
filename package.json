@@ -29,9 +29,9 @@
     "test": "react-scripts test",
     "test-react": "jest ./__tests__/unit",
     "eject": "react-scripts eject",
-    "electron:serve": "concurrently -k \"cross-env PORT=3002 BROWSER=none npm start\" \"npm run electron:start\"",
+    "electron:serve": "concurrently -k \"cross-env PORT=9357 BROWSER=none npm start\" \"npm run electron:start\"",
     "electron:build": "",
-    "electron:start": "wait-on tcp:3002 && electron .",
+    "electron:start": "wait-on tcp:9357 && electron .",
     "pre-commit": "rm -rf .git/hooks && ln -s ../.husky .git/hooks"
   },
   "jest": {
