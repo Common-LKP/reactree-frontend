@@ -46,7 +46,6 @@ export default function Slider() {
             type="range"
             min="10"
             max="150"
-            defaultValue={window.innerWidth / 4.5}
             name="width"
             aria-label="width"
           />

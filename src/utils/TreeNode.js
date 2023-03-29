@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { v4 as uuidv4 } from "uuid";
 
-function Node() {
+function TreeNode() {
   this.name = "";
   this.props = [];
   this.state = [];
@@ -24,11 +24,11 @@ const pushState = function (memoizedState, stateArray, reduxStateArray) {
   pushState(memoizedState.next, stateArray, reduxStateArray);
 };
 
-Node.prototype.addChild = function (child) {
+TreeNode.prototype.addChild = function (child) {
   this.children.unshift(child);
 };
 
-Node.prototype.setName = function (node) {
+TreeNode.prototype.setName = function (node) {
   this.tag = node.tag;
   this.file = node._debugSource;
 
@@ -47,7 +47,7 @@ Node.prototype.setName = function (node) {
   }
 };
 
-Node.prototype.addProps = function (node) {
+TreeNode.prototype.addProps = function (node) {
   if (!node.memoizedProps) return;
 
   if (node.tag === 0 || node.tag === 1) {
@@ -55,7 +55,7 @@ Node.prototype.addProps = function (node) {
   }
 };
 
-Node.prototype.addState = function (node) {
+TreeNode.prototype.addState = function (node) {
   if (!node.memoizedState) return;
 
   if (node.tag === 0 || node.tag === 1) {
@@ -63,4 +63,4 @@ Node.prototype.addState = function (node) {
   }
 };
 
-export default Node;
+export default TreeNode;

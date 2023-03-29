@@ -1,9 +1,8 @@
 const { app, BrowserWindow, ipcMain, globalShortcut } = require("electron");
 const path = require("path");
-const { readFileSync } = require("fs");
 
 const { quitApplication } = require("./utils");
-const { openDialogHandler } = require("./ipc-handler");
+const { openDialogHandler, nodeFileHandler } = require("./ipc-handler");
 const { SIZE } = require("../../src/assets/constants");
 
 const createWindow = () => {
@@ -15,20 +14,13 @@ const createWindow = () => {
     },
   });
   win.setMinimumSize(1100, 850);
-  win.loadURL("http://localhost:3002");
+  win.loadURL("http://localhost:9357");
 };
 
 app.whenReady().then(() => {
   createWindow();
   ipcMain.handle("open-dialog", openDialogHandler);
-
-  ipcMain.handle("nodeFileInfo-to-main", (event, value) => {
-    const nodeFilePath = value?.fileName;
-    const code = readFileSync(nodeFilePath, { encoding: "utf8" });
-
-    const mainWindow = BrowserWindow.getFocusedWindow();
-    mainWindow.webContents.send("nodeFileInfo-to-react", code);
-  });
+  ipcMain.handle("nodeFileInfo-to-main", nodeFileHandler);
 
   if (process.platform === "darwin") {
     globalShortcut.register("Command+Q", quitApplication);

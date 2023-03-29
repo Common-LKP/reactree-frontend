@@ -5,6 +5,7 @@ import { javascript } from "@codemirror/lang-javascript";
 
 const Wrapper = styled.div`
   max-height: 220px;
+  max-width: 49vw;
   overflow: auto;
 `;
 
@@ -16,7 +17,6 @@ export default function Codeviewer({ code }) {
         theme="dark"
         extensions={[javascript({ jsx: true })]}
         editable={false}
-        overflow="auto"
       />
     </Wrapper>
   );

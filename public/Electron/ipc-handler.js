@@ -1,4 +1,3 @@
-/* eslint-disable consistent-return */
 const { BrowserWindow, BrowserView, dialog } = require("electron");
 const { exec, execSync } = require("child_process");
 const path = require("path");
@@ -47,7 +46,7 @@ const openDialogHandler = async () => {
 
   const checkUserConfirm = await checkDownloadJson(mainWindow);
 
-  if (!checkUserConfirm) return;
+  if (!checkUserConfirm) return undefined;
 
   exec(
     `ln -s ${userHomePath}/Desktop/reactree-frontend/src/utils/reactree.js ${filePath}/src/reactree-symlink.js`,
@@ -110,4 +109,13 @@ const openDialogHandler = async () => {
   return undefined;
 };
 
+const nodeFileHandler = (event, value) => {
+  const nodeFilePath = value?.fileName;
+  const code = readFileSync(nodeFilePath, { encoding: "utf8" });
+
+  const mainWindow = BrowserWindow.getFocusedWindow();
+  mainWindow.webContents.send("nodeFileInfo-to-react", code);
+};
+
 exports.openDialogHandler = openDialogHandler;
+exports.nodeFileHandler = nodeFileHandler;

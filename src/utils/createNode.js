@@ -1,16 +1,25 @@
-import Node from "./Node";
+/* eslint-disable no-param-reassign */
+import TreeNode from "./TreeNode";
+
+const skipTag = [7, 9, 10, 11];
 
 function createNode(fiberNode, parentTree) {
   if (!fiberNode || Object.keys(fiberNode).length === 0) return null;
 
   const node = fiberNode.alternate ? fiberNode.alternate : fiberNode;
-  const tree = new Node();
+  const tree = new TreeNode();
 
   tree.setName(node);
   tree.addProps(node);
   tree.addState(node);
 
   if (fiberNode.sibling) {
+    while (skipTag.includes(fiberNode.sibling.tag)) {
+      const originSibling = fiberNode.sibling.sibling;
+      fiberNode.sibling = fiberNode.sibling.child;
+      fiberNode.sibling.sibling = originSibling;
+    }
+
     const siblingTree = createNode(fiberNode.sibling, parentTree);
     if (siblingTree) {
       parentTree.addChild(siblingTree);
@@ -18,13 +27,11 @@ function createNode(fiberNode, parentTree) {
   }
 
   if (fiberNode.child) {
-    let childTree;
-
-    if (fiberNode.child.tag === 10 || fiberNode.child.tag === 11) {
-      childTree = createNode(fiberNode.child.child, tree);
-    } else {
-      childTree = createNode(fiberNode.child, tree);
+    while (skipTag.includes(fiberNode.child.tag)) {
+      fiberNode.child = fiberNode.child.child;
     }
+
+    const childTree = createNode(fiberNode.child, tree);
 
     tree.addChild(childTree);
   }

@@ -6,7 +6,7 @@ import { hierarchy } from "d3";
 
 import Modal from "./Modal";
 import getTreeSVG from "../utils/getTreeSVG";
-import createNode from "../utils/reactFiberTree";
+import createNode from "../utils/createNode";
 import mockTreeData from "../assets/mockTreeData.json";
 import Codeviewer from "./Codeviewer";
 import { COLORS, SIZE } from "../assets/constants";
@@ -44,11 +44,10 @@ const Wrapper = styled.div`
   }
 
   .code-container {
-    z-index: 2;
+    z-index: 1;
     padding: 5px;
     background-color: ${COLORS.BACKGROUND};
     box-shadow: 0px 1px 5px 1px rgba(0, 0, 0, 0.2);
-    overflow: scroll;
   }
 
   .buttonNav {
