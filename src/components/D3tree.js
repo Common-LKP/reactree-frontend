@@ -9,6 +9,7 @@ import getTreeSVG from "../utils/getTreeSVG";
 import createNode from "../utils/reactFiberTree";
 import Node from "../utils/Node";
 import mockTreeData from "../assets/mockTreeData.json";
+import Codeviewer from "./Codeviewer";
 import { COLORS, SIZE } from "../assets/constants";
 
 const Wrapper = styled.div`
@@ -50,6 +51,11 @@ const Wrapper = styled.div`
     box-shadow: 0px 1px 5px 1px rgba(0, 0, 0, 0.2);
     overflow: scroll;
   }
+
+  .buttonNav {
+    display: flex;
+    justify-content: space-between;
+  }
 `;
 
 export default function D3Tree() {
@@ -72,7 +78,6 @@ export default function D3Tree() {
   const getCodes = async () => {
     try {
       await window.electronAPI.getNodeFileInfo((event, value) => {
-        console.log(value);
         setCode(value);
       });
     } catch (error) {
@@ -148,6 +153,10 @@ export default function D3Tree() {
     });
   }, [hierarchyData, layoutWidth, layoutHeight]);
 
+  const closeEditor = () => {
+    setNodeFile(null);
+  };
+
   return (
     <Wrapper>
       <div ref={svg} className="svg" />
@@ -171,8 +180,17 @@ export default function D3Tree() {
           </div>
         </Modal>
       </div>
-      <div>path: {nodeFile?.fileName}</div>
-      <pre className="code-container">{code}</pre>
+      {nodeFile && (
+        <>
+          <div className="buttonNav">
+            <div>path: {nodeFile.fileName}</div>
+            <button type="button" onClick={closeEditor}>
+              X
+            </button>
+          </div>
+          <Codeviewer code={code} />
+        </>
+      )}
     </Wrapper>
   );
 }
