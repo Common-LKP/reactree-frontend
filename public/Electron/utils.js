@@ -71,6 +71,21 @@ const getErrorMessage = sdterr => {
   return detail;
 };
 
+const checkDownloadJson = async window => {
+  const options = {
+    type: "question",
+    buttons: ["Yes", "No"],
+    defaultId: 1,
+    title: "Confirm",
+    message:
+      "트리구조를 그리기 위해서는 JSON파일을 다운로드 해야합니다. \n 다운로드 하시겠습니까?",
+  };
+
+  const result = await dialog.showMessageBox(window, options);
+
+  return result.response === 0;
+};
+
 const createErrorDialog = content => {
   const title = "에러 발생!";
   dialog.showErrorBox(title, content);
@@ -81,4 +96,5 @@ module.exports = {
   quitApplication,
   createErrorDialog,
   portNumber,
+  checkDownloadJson,
 };

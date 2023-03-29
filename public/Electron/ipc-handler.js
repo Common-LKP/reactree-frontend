@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 const { BrowserWindow, BrowserView, dialog } = require("electron");
 const { exec, execSync } = require("child_process");
 const path = require("path");
@@ -5,7 +6,12 @@ const os = require("os");
 const { readFileSync, writeFileSync, appendFileSync } = require("fs");
 const waitOn = require("wait-on");
 
-const { getErrorMessage, portNumber, createErrorDialog } = require("./utils");
+const {
+  getErrorMessage,
+  checkDownloadJson,
+  portNumber,
+  createErrorDialog,
+} = require("./utils");
 
 const userHomePath = os.homedir();
 
@@ -38,6 +44,10 @@ const openDialogHandler = async () => {
     );
 
   const filePath = filePaths[0];
+
+  const checkUserConfirm = await checkDownloadJson(mainWindow);
+
+  if (!checkUserConfirm) return;
 
   exec(
     `ln -s ${userHomePath}/Desktop/reactree-frontend/src/utils/reactree.js ${filePath}/src/reactree-symlink.js`,

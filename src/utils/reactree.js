@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 import deepCopy from "./deepCopy";
 
 const essentialKeys = ["memoizedState", "queue", "value"];
