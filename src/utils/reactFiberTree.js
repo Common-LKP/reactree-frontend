@@ -18,7 +18,7 @@ function createNode(fiberNode, parentTree) {
   }
 
   if (fiberNode.child) {
-    const childTree = createNode(fiberNode.child.child, tree);
+    const childTree = createNode(fiberNode.child, tree);
 
     if (childTree) {
       tree.addChild(childTree);

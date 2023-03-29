@@ -19,7 +19,7 @@ const pushState = function (memoizedState, stateArray) {
 };
 
 Node.prototype.addChild = function (child) {
-  this.children.push(child);
+  this.children.unshift(child);
 };
 
 Node.prototype.setName = function (node) {

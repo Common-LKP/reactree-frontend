@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 const { ipcMain, BrowserWindow, BrowserView, dialog } = require("electron");
 const { exec, execSync } = require("child_process");
 const path = require("path");
@@ -119,7 +120,6 @@ const registerIpcHandlers = () => {
     exec("rm data.json", { cwd: `${os.homedir()}/Downloads` });
     mainWindow.webContents.send("get-node-data", JSON.parse(fiberFile));
 
-    // eslint-disable-next-line consistent-return
     return filePath;
   });
 };
