@@ -18,14 +18,18 @@ function createNode(fiberNode, parentTree) {
   }
 
   if (fiberNode.child) {
-    const childTree = createNode(fiberNode.child, tree);
+    let childTree;
 
-    if (childTree) {
-      tree.addChild(childTree);
+    if (fiberNode.child.tag === 10 || fiberNode.child.tag === 11) {
+      childTree = createNode(fiberNode.child.child, tree);
+    } else {
+      childTree = createNode(fiberNode.child, tree);
     }
+
+    tree.addChild(childTree);
   }
 
-  return tree || null;
+  return tree;
 }
 
 export default createNode;

@@ -44,7 +44,7 @@ const quitApplication = () => {
   }
 };
 
-const handleErrorMessage = sdterr => {
+const getErrorMessage = sdterr => {
   const lines = sdterr.split(os.EOL);
   let detail;
 
@@ -86,10 +86,15 @@ const checkDownloadJson = async window => {
   return result.response === 0;
 };
 
+const createErrorDialog = content => {
+  const title = "에러 발생!";
+  dialog.showErrorBox(title, content);
+};
+
 module.exports = {
-  handleErrorMessage,
-  checkPortNumber,
+  getErrorMessage,
   quitApplication,
+  createErrorDialog,
   portNumber,
   checkDownloadJson,
 };

@@ -11,6 +11,7 @@ const SIZE = {
   PADDING: 8,
   WINDOW_WIDTH: 1500,
   WINDOW_HEIGHT: 920,
+  MODAL_WIDTH: 200,
 };
 
 exports.COLORS = COLORS;

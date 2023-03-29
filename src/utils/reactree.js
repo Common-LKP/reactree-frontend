@@ -1,6 +1,8 @@
 /* eslint-disable consistent-return */
 import deepCopy from "./deepCopy";
 
+const essentialKeys = ["memoizedState", "queue", "value"];
+
 const seen = new WeakSet();
 
 const getCircularReplacer = (key, value) => {
@@ -9,6 +11,8 @@ const getCircularReplacer = (key, value) => {
 
   if (key === "memoizedProps" && typeof value === "object" && value)
     return value;
+
+  if (essentialKeys.includes(key)) return value;
 
   if (typeof value === "object" && value !== null) {
     if (seen.has(value)) return undefined;
