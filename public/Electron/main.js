@@ -3,14 +3,15 @@ const path = require("path");
 
 const { quitApplication } = require("./utils");
 const { openDialogHandler, nodeFileHandler } = require("./ipc-handler");
-const { SIZE } = require("../../src/assets/constants");
 
 const createWindow = () => {
   const win = new BrowserWindow({
-    width: SIZE.WINDOW_WIDTH,
-    height: SIZE.WINDOW_HEIGHT,
+    width: 1700,
+    height: 1100,
+    fullscreen: true,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
+      devTools: false,
     },
   });
   win.setMinimumSize(1100, 850);

@@ -22,13 +22,15 @@ const handleError = (view, message) => {
 
 const openDialogHandler = async () => {
   const mainWindow = BrowserWindow.getFocusedWindow();
-  const view = new BrowserView();
+  const view = new BrowserView({
+    roundedCorners: true,
+  });
   mainWindow.setBrowserView(view);
   view.setBounds({
     x: 8,
-    y: 164,
-    width: 740,
-    height: 740,
+    y: 134,
+    width: 830,
+    height: 880,
   });
   view.setAutoResize({ width: true, height: true });
 
