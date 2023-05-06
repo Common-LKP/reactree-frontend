@@ -2,13 +2,12 @@
  * @jest-environment jsdom
  */
 import "@testing-library/jest-dom";
-import React from "react";
-import { fireEvent, render, waitFor } from "@testing-library/react";
+import { fireEvent } from "@testing-library/react";
+import createNode from "../../../src/utils/createNode";
 import deepCopy from "../../../src/utils/deepCopy";
 import getTreeSVG from "../../../src/utils/getTreeSVG";
-import Node from "../../../src/utils/Node";
-import createNode from "../../../src/utils/reactFiberTree";
 import reactree from "../../../src/utils/reactree";
+import TreeNode from "../../../src/utils/TreeNode";
 import mockFiberNode from "../../../src/assets/mockFiberNode.json";
 
 describe("deeCopy", () => {
@@ -74,7 +73,7 @@ describe("getTreeSVG", () => {
   it("기본 설정이 적용된 트리 SVG 요소를 반환합니다.", () => {
     expect(svg.tagName).toBe("svg");
     expect(svg.querySelector("circle").getAttribute("r")).toBe("10");
-    expect(svg.querySelector("g").getAttribute("stroke")).toBe("#363636");
+    expect(svg.querySelector("g").getAttribute("stroke")).toBe("#666666");
     expect(svg.querySelector("text").textContent).toBe("Parent");
   });
 
@@ -83,24 +82,16 @@ describe("getTreeSVG", () => {
       width: 500,
       height: 500,
       r: 20,
-      fill: "red",
-      stroke: "blue",
-      strokeWidth: 5,
-      label: data => `Node ${data.name}`,
+      label: data => `TreeNode ${data.name}`,
     };
     const customedSVG = getTreeSVG(data, options);
 
     expect(customedSVG.getAttribute("width")).toBe("500");
     expect(customedSVG.getAttribute("height")).toBe("500");
     expect(customedSVG.querySelector("circle").getAttribute("r")).toBe("20");
-    expect(["red", "blue"]).toContain(
-      customedSVG.querySelector("circle").getAttribute("fill"),
+    expect(customedSVG.querySelector("text").textContent).toBe(
+      "TreeNode Parent",
     );
-    expect(customedSVG.querySelector("g").getAttribute("stroke")).toBe("blue");
-    expect(customedSVG.querySelector("g").getAttribute("stroke-width")).toBe(
-      "5",
-    );
-    expect(customedSVG.querySelector("text").textContent).toBe("Node Parent");
   });
 
   it("<circle> 요소가 알맞은 수만큼 렌더링됩니다.", () => {
@@ -153,14 +144,14 @@ describe("getTreeSVG", () => {
   });
 });
 
-describe("Node", () => {
+describe("TreeNode", () => {
   let node;
 
   beforeEach(() => {
-    node = new Node();
+    node = new TreeNode();
   });
 
-  it("Node 생성자 함수로 객체를 생성합니다.", () => {
+  it("TreeNode 생성자 함수로 객체를 생성합니다.", () => {
     expect(node).toBeInstanceOf(Object);
     expect(node.name).toBe("");
     expect(node.props).toEqual([]);
@@ -170,7 +161,7 @@ describe("Node", () => {
   });
 
   it("child node를 생성합니다.", () => {
-    const childNode = new Node();
+    const childNode = new TreeNode();
     node.addChild(childNode);
 
     expect(node.children).toContain(childNode);
@@ -190,7 +181,7 @@ describe("Node", () => {
         memoizedProps: "propValue",
       };
 
-      const specificTags = [0, 3, 6, 8, 10, 11, 15];
+      const specificTags = [0, 3, 6, 8, 15];
 
       if (!specificTags.includes(i)) {
         nodeN.elementType = "div";
@@ -206,10 +197,6 @@ describe("Node", () => {
         expect(node.name).toBe("propValue");
       } else if (nodeN.tag === 8) {
         expect(node.name).toBe("React.StrictMode");
-      } else if (nodeN.tag === 10 && nodeN.elementType) {
-        expect(node.name).toBe("ContextProvider");
-      } else if (nodeN.tag === 11 && nodeN.elementType) {
-        expect(node.name).toBe("ForwardRef");
       } else if (nodeN.tag === 15) {
         expect(node.name).toBe("SimpleMemoComponent");
       } else {
@@ -228,15 +215,21 @@ describe("Node", () => {
   });
 
   it("state를 배열 형태로 할당합니다.", () => {
+    const state1 = 1;
+    const state2 = 2;
     const node0 = {
       tag: 0,
       memoizedState: {
-        memoizedState: "state1",
-        next: { memoizedState: "state2", next: null },
+        baseState: state1,
+        next: { baseState: state2, next: null },
       },
     };
     node.addState(node0);
-    expect(node.state).toEqual(["state1", "state2"]);
+
+    expect(node.state).toEqual([
+      JSON.stringify(state1),
+      JSON.stringify(state2),
+    ]);
   });
 });
 
@@ -244,14 +237,14 @@ describe("createNode", () => {
   let node;
 
   beforeEach(() => {
-    node = new Node();
+    node = new TreeNode();
   });
 
-  it("첫번째 인자에 유효하지 않은 fiberNode를 입력하면 각 속성값은 undefined 또는 빈 배열 또는 임의의 uuid가 할당됩니다.", () => {
+  it("첫번째 인자에 유효하지 않은 fiberNode를 입력하면 각 속성값은 빈 문자열 또는 빈 배열 또는 임의의 uuid가 할당됩니다.", () => {
     const invalidInput = { a: 1 };
     createNode(invalidInput, node);
 
-    expect(node.name).toBe(undefined);
+    expect(node.name).toBe("");
     expect(node.props).toEqual([]);
     expect(node.state).toEqual([]);
     expect(node.uuid).toEqual(expect.any(String));
@@ -289,6 +282,8 @@ describe("reactree", () => {
         click: jest.fn(),
       });
     const stringifySpy = jest.spyOn(JSON, "stringify");
+    const mockObjectURL = "mock-object-url";
+    URL.createObjectURL = jest.fn().mockReturnValue(mockObjectURL);
 
     reactree({ current: {} });
 
@@ -296,11 +291,9 @@ describe("reactree", () => {
       expect.any(Object),
       expect.any(Function),
     );
-    const mockFiberJson = stringifySpy.mock.results[0].value;
     expect(createElementSpy).toHaveBeenCalledWith("a");
-    expect(createElementSpy.mock.results[0].value.href).toBe(
-      `data:text/json;charset=utf-8,${mockFiberJson}`,
-    );
+    expect(URL.createObjectURL).toHaveBeenCalledWith(expect.any(Blob));
+    expect(createElementSpy.mock.results[0].value.href).toBe(mockObjectURL);
     expect(createElementSpy.mock.results[0].value.download).toBe("data.json");
     expect(createElementSpy.mock.results[0].value.click).toHaveBeenCalled();
 
