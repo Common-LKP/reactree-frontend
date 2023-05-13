@@ -26,8 +26,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "test-react": "jest ./__tests__/unit",
+    "test": "jest",
+    "test-util": "jest ./__tests__/unit/react/util.test.js",
     "eject": "react-scripts eject",
     "electron:serve": "concurrently -k \"cross-env PORT=9357 BROWSER=none npm start\" \"npm run electron:start\"",
     "electron:build": "",
