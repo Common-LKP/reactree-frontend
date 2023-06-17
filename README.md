@@ -51,21 +51,17 @@
 #### Github에 API요청을 보내서 코드를 문자열로 받기
   ```js
   // github repo 정보를 받아오는 api
-  async function getGit (owner, repo, path) {
-    const data = await fetch (
-      `https://api.github.com/repos/${owner}/${repo}/contents/${path}`
-      )
-      .then (d => d.json ())
-      .then (d =>
-        fetch (`https://api.github.com/repos/${owner}/${repo}/git/blobs/${d.sha}`)
-      )
-      .then (d => d.json ())
-      .then (d => console.log(atob (d.content)));
+  async function getGit(owner, repo, path) {
+    const dataResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`);
+    const data = await dataResponse.json();
+    const blobsResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/blobs/${data.sha}`);
+    const blobs = await blobsResponse.json();
+    console.log(atob(blobs.content));
 
-    return data;
+    return blobs;
   }
 
-  getGit("pmjuu", "my-workout-manager", "src/App.js");
+  await getGit("pmjuu", "my-workout-manager", "src/App.js");
   ```
   🔽 콘솔 결과물 - 실제 Repo에 있는 파일 코드를 문자열로 받아오는 것이 가능했습니다.
   <img src="https://github.com/pmjuu/climick-client/assets/50537876/337ff9d6-2811-4436-a010-94570bc7d621" width=400><br>
