@@ -19,7 +19,7 @@
   - [2. 일렉트론 앱 내부 함수를 사용자 디렉토리에서 어떻게 실행시킬 수 있을까?](#2-일렉트론-앱-내부-함수를-사용자-디렉토리에서-어떻게-실행시킬-수-있을까)
     - [SymLink를 통해 사용자 디렉토리에서 reactree 함수에 접근하기](#symlink를-통해-사용자-디렉토리에서-reactree-함수에-접근하기)
   - [3. 사용자 디렉토리에서 rootFiberNode를 어떻게 전송할 수 있을까?](#3-사용자-디렉토리에서-rootfibernode를-어떻게-전송할-수-있을까)
-- [Tech stack](#Tech-stack)
+- [Tech stacks](#Tech-stacks)
 - [Features](#Features)
 - [Timeline](#Timeline)
 
@@ -173,7 +173,7 @@
 
 ### 결론
 
-* 코드 파싱이 아니라 현재 화면에 렌더링된 컴포넌트 정보를 아용합니다.<br>
+* 코드 파싱이 아니라 현재 화면에 렌더링된 컴포넌트 정보를 이용합니다.<br>
     -> **React Fiber** 활용하기
 * 사용자의 로컬 디렉토리에서 `npm start`를 실행시켜서 localhost에서 렌더링된 화면을 일렉트론 view로 보여줍니다.<br>
     -> **Electron** 앱에서 `child_process` 활용하기
@@ -277,7 +277,7 @@
 ### 시도한 방법
 
 * 우리가 만든 함수를 npm package에 등록해서 활용하기
-  - 프로젝트 규모에 비해 큰 작업이라 판단했습니다.
+  - 사용자가 npm 패키지를 설치하고 분석하려는 프로젝트의 코드에 추가 작성해야 하는 번거로움이 있습니다.
 
 ### 결론
 
@@ -392,7 +392,7 @@ appendFileSync(`${filePath}/src/index.js`, JScodes);
 
 <br>
 
-# Tech stack
+# Tech stacks
 
 ### Frontend
 
@@ -412,7 +412,7 @@ appendFileSync(`${filePath}/src/index.js`, JScodes);
 * 시스템 리소스 접근
   - 웹뷰 페이지 내에서 Node.js API를 직접 사용해서 파일 시스템에 접근할 수 있습니다. 이는 웹 브라우저에서는 일반적으로 사용할 수 없는 기능입니다.
 * 웹 개발 기술 활용
-  - 프론트엔드 영역 Renderer 프로세스에서는 Chromium을, 백엔드 영역 Main 프로세스에서는 Node.js를 사용하기 대문에, 기존의 웹 개발 기술을 활용할 수 있습니다.
+  - 프론트엔드 영역 Renderer 프로세스에서는 Chromium을, 백엔드 영역 Main 프로세스에서는 Node.js를 사용하기 때문에, 기존의 웹 개발 기술을 활용할 수 있습니다.
 * 크로스 플랫폼 호환성
   - Windows, macOS, Linux 등 다양한 운영 체제에서 실행할 수 있는 데스크톱 애플리케이션을 개발할 수 있습니다.
 
