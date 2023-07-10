@@ -19,6 +19,7 @@
   - [2. 일렉트론 앱 내부 함수를 사용자 디렉토리에서 어떻게 실행시킬 수 있을까?](#2-일렉트론-앱-내부-함수를-사용자-디렉토리에서-어떻게-실행시킬-수-있을까)
     - [SymLink를 통해 사용자 디렉토리에서 reactree 함수에 접근하기](#symlink를-통해-사용자-디렉토리에서-reactree-함수에-접근하기)
   - [3. 사용자 디렉토리에서 rootFiberNode를 어떻게 전송할 수 있을까?](#3-사용자-디렉토리에서-rootfibernode를-어떻게-전송할-수-있을까)
+  - [4. 사용자 프로젝트가 큰 경우 데이터 전송의 안정성을 어떻게 높일 수 있을까?](#4-사용자-프로젝트가-큰-경우-데이터-전송의-안정성을-어떻게-높일-수-있을까)
 - [Tech stacks](#Tech-stacks)
 - [Features](#Features)
 - [Timeline](#Timeline)
@@ -178,7 +179,7 @@
 * 사용자의 로컬 디렉토리에서 `npm start`를 실행시켜서 localhost에서 렌더링된 화면을 일렉트론 view로 보여줍니다.<br>
     -> **Electron** 앱에서 `child_process` 활용하기
 
-### React Fiber란?
+#### React Fiber란?
 
 * React v16 에서 리액트의 핵심 알고리즘을 재구성한 새로운 재조정(Reconciliation) 알고리즘입니다.
 * 모든 작업을 동기적으로 실행하던 기존의 stack reconciler의 단점을 보완하여 concurrency가 가능해집니다.
@@ -283,7 +284,7 @@
 
 * `Symlink`를 활용합니다.
 
-### Symlink란?
+#### Symlink란?
 
 * 심링크(symlink) 또는 심볼릭 링크(symbolic link)는 리눅스의 파일의 한 종류로, 어떤 파일 시스템에서든 이미 생성되어 있는 다른 파일이나 디렉토리를 참조할 수 있습니다.
 
@@ -292,7 +293,7 @@
 
 => 외부 사용자 디렉토리에서 일렉트론 앱 내부 함수를 참조할 수 있도록 하기 위해서 symlink를 사용하기로 했습니다.
 
-### SymLink를 통해 사용자 디렉토리에서 reactree 함수 참조하기
+#### SymLink를 통해 사용자 디렉토리에서 reactree 함수 참조하기
 
 * Node.js의 Child process `exec()`를 통해 `symlink`를 생성합니다.
 * 사용자 디렉토리의 `src/index.js` 파일에서 `symlink`로 생성한 `reactree()`함수를 import 합니다.
@@ -389,6 +390,49 @@ appendFileSync(`${filePath}/src/index.js`, JScodes);
 
     mainWindow.webContents.send("node-to-react", JSON.parse(fiberFile));
     ```
+<br>
+
+## 4. 사용자 프로젝트가 큰 경우 데이터 전송의 안정성을 어떻게 높일 수 있을까?
+
+### 시도한 방법
+
+* 초기에는 추출한 데이터를 다운로드할 수 있는 링크를 생성해 로컬 환경에 사용자의 프로젝트 정보를 `json` 형식으로 다운받았습니다. <br>
+
+### 문제 발생
+
+* 이 때 규모가 작은 프로젝트의 경우 문제가 없었지만, 프로젝트의 규모가 커질 경우 데이터가 끊기는 현상이 발생했습니다.
+* 조사 결과 URI 스킴 방식에는 데이터 제한이 있었고, 이는 큰 데이터를 처리하기에 적합한 방식이 아니라는것을 알게 되었습니다.
+
+### 결론
+
+* `Blob` 객체 활용
+
+#### `Blob`이란?
+
+`Blob`은 binary large object의 약자입니다. 이름과 같이 데이터를 바이너리 객체 형태로 저장할 수 있습니다.
+
+-> `Blob` 데이터에 접근하기 위해, `Blob` 객체를 가리키는 URL을 만드는 과정이 필요했습니다
+
+1. `Blob`의 `createObjectURL()`을 사용해 주어진 객체를 가르키는 URL을 DOMstring으로 변환합니다. 이 URL은 윈도우 창이 닫히면 자동으로 삭제됩니다.
+
+  ```js
+  const blob = new Blob([fiberJson], { type: "text/json;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  ```
+
+2. `<a>` 요소를 생성하고, `href` 속성에 위에서 생성한 `Blob` URL을 설정합니다. 그리고 `download` 속성을 설정하여 파일 다운로드를 위한 링크로 사용합니다.
+
+  ```js
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "data.json";
+  ```
+
+3. 다운로드가 완료되면 `revokeObjectURL()`을 사용해 `Blob` URL을 무효화하고, 더 이상 필요하지 않은 리소스를 해제합니다. 이를 통해 메모리 누수를 방지할 수 있습니다.
+
+  ```js
+  URL.revokeObjectURL(url);
+  ```
 
 <br>
 
